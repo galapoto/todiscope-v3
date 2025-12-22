@@ -1,0 +1,164 @@
+# Compatibility Checks Configuration for ERP Integration Readiness Engine
+#
+# This file defines the compatibility check rules and requirements for ERP system integration.
+
+infrastructure_compatibility:
+  # Required protocols for infrastructure
+  required_protocols:
+    - "REST"
+    - "SOAP"
+    - "JDBC"
+    - "ODBC"
+    - "SFTP"
+  
+  # Required data formats
+  required_data_formats:
+    - "JSON"
+    - "XML"
+    - "CSV"
+    - "Parquet"
+  
+  # Required authentication methods
+  required_auth_methods:
+    - "OAuth2"
+    - "API Key"
+    - "Basic Auth"
+    - "Certificate"
+  
+  # Network requirements
+  network:
+    min_bandwidth_mbps: 10  # Minimum bandwidth in Mbps
+    max_latency_ms: 100      # Maximum acceptable latency in milliseconds
+    required_ports: []       # Required ports (empty = no specific port requirements)
+
+version_compatibility:
+  # ERP system version requirements
+  erp_versions:
+    # Minimum supported version (semantic versioning)
+    min_version: "1.0.0"
+    # Maximum supported version (semantic versioning)
+    max_version: "99.9.9"
+    # Specific supported versions (if specified, only these are allowed)
+    supported_versions: []
+  
+  # API version requirements
+  api_versions:
+    # Required API versions (empty = no specific version requirements)
+    required_versions: []
+    # Minimum API version
+    min_api_version: "1.0"
+    # Maximum API version
+    max_api_version: "99.9"
+
+security_compatibility:
+  # Encryption requirements
+  encryption:
+    # Required encryption methods
+    required: []  # Empty = no specific requirement, but TLS is recommended
+    # Supported encryption methods
+    supported:
+      - "TLS 1.2"
+      - "TLS 1.3"
+      - "AES-256"
+  
+  # TLS/SSL version requirements
+  tls:
+    # Required TLS versions
+    required_versions: ["1.2", "1.3"]
+    # Minimum TLS version
+    min_tls_version: "1.2"
+    # Supported TLS versions
+    supported_versions: ["1.2", "1.3"]
+  
+  # Certificate requirements
+  certificate:
+    # Certificate support required
+    required: false
+    # Certificate validation required
+    validation_required: true
+    # Supported certificate types
+    supported_types:
+      - "X.509"
+      - "Self-signed"
+  
+  # Authentication security requirements
+  authentication:
+    # Minimum password complexity (if applicable)
+    min_password_length: 12
+    # Required authentication factors
+    required_factors: []  # Empty = no specific MFA requirement
+    # Supported authentication factors
+    supported_factors:
+      - "Password"
+      - "Token"
+      - "Certificate"
+      - "Biometric"
+
+# Compatibility check rules
+rules:
+  # Rule: Protocol must be supported
+  protocol_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system protocol must be supported by infrastructure"
+  
+  # Rule: Data format must be supported
+  data_format_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system data format must be supported by infrastructure"
+  
+  # Rule: Authentication method must be supported
+  auth_method_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system authentication method must be supported by infrastructure"
+  
+  # Rule: Version must be within supported range
+  version_range:
+    enabled: true
+    severity: "high"
+    description: "ERP system version must be within supported range"
+  
+  # Rule: API version must be supported
+  api_version_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system API version must be supported"
+  
+  # Rule: Encryption must be supported
+  encryption_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system encryption requirements must be supported"
+  
+  # Rule: TLS version must be supported
+  tls_version_support:
+    enabled: true
+    severity: "high"
+    description: "ERP system TLS version must be supported"
+  
+  # Rule: Network bandwidth must be sufficient
+  network_bandwidth:
+    enabled: true
+    severity: "high"
+    description: "Infrastructure must have sufficient network bandwidth"
+
+# Compatibility check exclusions
+exclusions:
+  - id: "no_live_testing"
+    category: "testing"
+    description: "Engine does not perform live connectivity or performance testing"
+    rationale: "Engine assesses configuration compatibility only; live testing requires operational environment"
+  
+  - id: "no_network_probing"
+    category: "network"
+    description: "Engine does not probe network connectivity or measure latency"
+    rationale: "Engine assesses configuration only; network testing requires operational environment"
+  
+  - id: "no_security_audit"
+    category: "security"
+    description: "Engine does not perform security audits or penetration testing"
+    rationale: "Engine assesses configuration compatibility only; security audits require specialized tools"
+
+

@@ -1,0 +1,5 @@
+ENGINE_ID = "engine_regulatory_readiness"
+ENGINE_VERSION = "v1"
+SYSTEM_EVIDENCE_KIND = "regulatory_compliance_snapshot"
+CONTROL_EVIDENCE_KIND = "regulatory_control"
+FINDING_KIND = "regulatory_control_finding"

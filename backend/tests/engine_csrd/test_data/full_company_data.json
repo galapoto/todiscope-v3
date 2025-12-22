@@ -1,0 +1,38 @@
+{
+  "source_system": "test",
+  "source_record_id": "sample_company",
+  "esg": {
+    "emissions": {
+      "scope1": 1500,
+      "scope2": 3000,
+      "scope3": 10000
+    },
+    "energy_consumption": {
+      "renewable": 45.0,
+      "non_renewable": 55.0
+    },
+    "governance": {
+      "board_diversity": 0.35,
+      "esg_committee": true,
+      "esg_policy": true,
+      "sustainability_committee": true
+    },
+    "social": {
+      "employee_count": 1000,
+      "gender_diversity_ratio": 0.42,
+      "employee_turnover_rate": 0.12
+    }
+  },
+  "financial": {
+    "revenue": 500000000,
+    "operating_costs": 400000000,
+    "profit": 100000000,
+    "assets": 2500000000,
+    "market_cap": 3000000000
+  },
+  "metadata": {
+    "reporting_period": "2024",
+    "company_name": "Sample Corporation",
+    "industry": "Manufacturing"
+  }
+}

@@ -1,0 +1,23 @@
+traceability:
+  engine_id: engine_construction_cost_intelligence_core
+
+  evidence:
+    assumptions_kind: assumptions
+    inputs_boq_kind: inputs_boq
+    inputs_actual_kind: inputs_actual
+
+  findings:
+    - kind: data_quality_unmatched_boq
+      description: BOQ lines without a matching Actual group under the configured identity_fields.
+    - kind: data_quality_unmatched_actual
+      description: Actual lines without a matching BOQ group under the configured identity_fields.
+    - kind: data_quality_incomplete_costs
+      description: One or more lines missing fields needed to compute effective cost under cost_basis.
+
+  assumptions:
+    - id: dataset_version_binding
+    - id: identity_alignment
+    - id: cost_basis
+    - id: incomplete_cost_handling
+    - id: breakdown_dimensions
+

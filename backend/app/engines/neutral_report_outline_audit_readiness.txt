@@ -1,0 +1,10 @@
+- Report header  
+- Evaluation run identifier  
+- Engine name  
+- Input dataset reference  
+- Output dataset reference  
+- Status  
+- Result summary  
+- Error message  
+- Evidence artifact references  
+- Data quality dimensions assessed

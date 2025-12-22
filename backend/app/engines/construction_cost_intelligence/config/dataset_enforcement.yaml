@@ -1,0 +1,10 @@
+dataset_version_enforcement:
+  # Core rule: every computation is bound to an explicit DatasetVersion.
+  required: true
+
+  # Core rule: input lines must already be bound to the same DatasetVersion as the run.
+  require_input_dataset_version_match: true
+
+  # Core rule: every output structure must echo the DatasetVersion id for traceability.
+  require_output_dataset_version_binding: true
+

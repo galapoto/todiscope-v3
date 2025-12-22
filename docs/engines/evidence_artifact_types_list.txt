@@ -1,0 +1,18 @@
+# Evidence Artifact Types List
+
+This document enumerates the types of evidence artifacts used within the Data Migration & ERP Readiness Engine to support data validation, audit readiness, and integration verification.
+
+## Artifact Types
+
+- Data Profiling Reports: Summaries of data quality metrics and anomalies.
+- Mapping Specifications: Documents detailing data field mappings between source and target systems.
+- Integration Test Logs: Records of ERP integration test executions and results.
+- Risk Assessment Reports: Analyses highlighting potential risks and mitigation strategies.
+- Configuration Snapshots: Captures of engine configuration settings at specific points in time.
+- Audit Trail Logs: Detailed logs tracking changes, actions, and decisions during migration.
+- Validation Checklists: Lists of validation steps and their completion status.
+- Exception Reports: Documentation of errors, exceptions, and their resolutions.
+
+## Usage
+
+These artifact types serve as key inputs and outputs for the engine's processes, ensuring traceability and compliance throughout the migration and integration lifecycle.

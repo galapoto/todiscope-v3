@@ -1,0 +1,67 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: todiscope
+      POSTGRES_PASSWORD: todiscope
+      POSTGRES_DB: todiscope_v3
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todiscope -d todiscope_v3"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  minio:
+    image: minio/minio:RELEASE.2024-12-18T01-42-08Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniosecret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    environment:
+      TODISCOPE_DATABASE_URL: postgresql+asyncpg://todiscope:todiscope@db:5432/todiscope_v3
+      TODISCOPE_ARTIFACT_STORE_KIND: s3
+      TODISCOPE_S3_ENDPOINT_URL: http://minio:9000
+      TODISCOPE_S3_ACCESS_KEY_ID: minio
+      TODISCOPE_S3_SECRET_ACCESS_KEY: miniosecret
+      TODISCOPE_S3_BUCKET: todiscope-artifacts
+      TODISCOPE_ENABLED_ENGINES: ""
+    ports:
+      - "8200:8200"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus

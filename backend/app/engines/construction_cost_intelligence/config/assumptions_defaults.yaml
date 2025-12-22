@@ -1,0 +1,78 @@
+# Default Assumptions Configuration for Construction Cost Intelligence Engine
+# 
+# This file documents default assumptions used in variance detection and time-phased reporting.
+# These assumptions are automatically included in evidence payloads and report outputs.
+
+variance_detection:
+  # Default severity thresholds (as percentages)
+  thresholds:
+    tolerance: 5.0      # Within tolerance threshold
+    minor: 10.0         # Minor variance threshold
+    moderate: 25.0      # Moderate variance threshold
+    major: 50.0         # Major variance threshold
+  
+  # Default categorization
+  category_field: null  # Field name for variance categorization (null = no categorization)
+  
+  # Standard exclusions (what the engine does not do)
+  exclusions:
+    - id: "no_causality"
+      category: "causality"
+      description: "Engine does not determine causes of cost variances"
+      rationale: "Variance analysis is descriptive only; root cause analysis requires domain expertise"
+    
+    - id: "no_decisions"
+      category: "decisions"
+      description: "Engine does not make budget approval or project management decisions"
+      rationale: "Engine provides analytical signals only; decisions are human responsibility"
+    
+    - id: "no_budget_revision"
+      category: "budget_approval"
+      description: "Engine does not revise or approve budgets"
+      rationale: "Budget approval is a management decision; engine only reports variance signals"
+    
+    - id: "no_cost_control"
+      category: "cost_control"
+      description: "Engine does not implement cost control measures"
+      rationale: "Engine is analytical only; cost control actions are operational responsibility"
+
+time_phased_reporting:
+  # Default period type
+  period_type: "monthly"  # Options: daily, weekly, monthly, quarterly, yearly
+  
+  # Default date field for extraction
+  date_field: "date_recorded"  # Field name in CostLine.attributes
+  
+  # Default cost calculation preference
+  prefer_total_cost: true  # If true, prefer total_cost over quantity * unit_cost
+  
+  # Standard exclusions (same as variance detection)
+  exclusions:
+    - id: "no_causality"
+      category: "causality"
+      description: "Engine does not determine causes of cost variances"
+      rationale: "Time-phased analysis is descriptive only; root cause analysis requires domain expertise"
+    
+    - id: "no_decisions"
+      category: "decisions"
+      description: "Engine does not make budget approval or project management decisions"
+      rationale: "Engine provides analytical signals only; decisions are human responsibility"
+    
+    - id: "no_budget_revision"
+      category: "budget_approval"
+      description: "Engine does not revise or approve budgets"
+      rationale: "Budget approval is a management decision; engine only reports variance signals"
+    
+    - id: "no_cost_control"
+      category: "cost_control"
+      description: "Engine does not implement cost control measures"
+      rationale: "Engine is analytical only; cost control actions are operational responsibility"
+
+# Evidence linkage configuration
+evidence:
+  # Evidence emission settings
+  emit_evidence: true  # Whether to emit evidence bundles automatically
+  include_assumptions: true  # Whether to include assumptions in evidence payloads
+  include_limitations: true  # Whether to include limitations in reports
+
+

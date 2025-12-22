@@ -1,0 +1,17 @@
+comparison:
+  # Identity fields used to align BOQ lines to actual lines.
+  # These are logical identifiers only; domain semantics are defined in higher layers.
+  identity_fields:
+    - item_code
+    - cost_code
+
+  # How to interpret costs when comparing:
+  # - total_cost: use the provided total_cost only
+  # - quantity_unit_cost: derive cost from quantity * unit_cost only
+  # - prefer_total_cost: use total_cost when present, else quantity * unit_cost
+  cost_basis: prefer_total_cost
+
+  # Optional breakdown grouping (e.g., "category" like labor/materials/etc).
+  # This is purely a data-driven dimension: values must be present in `identity`
+  # or `attributes` on each CostLine (no inference performed).
+  breakdown_fields: []

@@ -1,0 +1,107 @@
+# Credit Readiness and Capital Raising Strategies - Assumptions and Thresholds
+# 
+# This configuration file contains assumptions and thresholds used in
+# credit readiness calculations and capital raising strategy recommendations.
+#
+# Platform Law Compliance:
+# - All assumptions are explicit and documented
+# - Thresholds are deterministic and can be overridden via parameters
+# - No implicit defaults
+
+# Debt-to-Equity Ratio Thresholds
+debt_to_equity_thresholds:
+  conservative: 0.5  # Below this is considered low risk
+  high: 1.0          # Between conservative and high is moderate risk
+  very_high: 2.0    # Above this is very high risk
+
+# Interest Coverage Ratio Thresholds
+interest_coverage_thresholds:
+  excellent: 5.0    # Excellent ability to service debt
+  good: 2.0         # Good ability to service debt
+  adequate: 1.5     # Adequate ability to service debt
+  # Below adequate is considered poor
+
+# Liquidity (Current Ratio) Thresholds
+liquidity_thresholds:
+  strong: 2.0       # Strong liquidity position
+  adequate: 1.0     # Adequate liquidity position
+  # Below adequate is considered weak
+
+# Debt Service Coverage Ratio (DSCR) Thresholds
+dscr_thresholds:
+  excellent: 1.5    # Excellent debt service coverage
+  good: 1.25        # Good debt service coverage
+  adequate: 1.1     # Adequate debt service coverage
+  # Below adequate is considered poor
+
+# Credit Risk Score Weights
+credit_risk_weights:
+  debt_to_equity: 0.30      # Weight for debt-to-equity ratio
+  interest_coverage: 0.30   # Weight for interest coverage ratio
+  liquidity: 0.25           # Weight for liquidity ratio
+  dscr: 0.15                # Weight for DSCR
+
+# Financial Market Access Thresholds
+market_access_thresholds:
+  excellent_score: 80       # Score >= 80: excellent market access
+  good_score: 60            # Score >= 60: good market access
+  adequate_score: 40        # Score >= 40: moderate market access
+  # Score < 40: limited market access
+
+# Debt Capacity Assumptions
+debt_capacity_assumptions:
+  default_target_dscr: 1.25        # Default target debt service coverage ratio
+  default_interest_rate: 0.05      # Default interest rate (5%)
+  default_loan_term_years: 5       # Default loan term in years
+  conservative_multiplier: 0.80   # Use 80% of calculated maximum capacity
+
+# Debt Instrument Thresholds
+debt_instrument_thresholds:
+  small_debt_threshold: 1000000     # $1M - threshold for small vs medium debt
+  medium_debt_threshold: 10000000   # $10M - threshold for medium vs large debt
+  large_debt_threshold: 50000000    # $50M - threshold for large debt instruments
+
+# Equity Capacity Assumptions
+equity_capacity_assumptions:
+  default_target_dilution: 0.20     # Default maximum acceptable dilution (20%)
+
+# Equity Instrument Thresholds
+equity_instrument_thresholds:
+  seed_threshold: 500000            # $500K - threshold for seed funding
+  series_a_threshold: 5000000       # $5M - threshold for Series A funding
+  ipo_threshold: 50000000          # $50M - threshold for IPO consideration
+
+# Hybrid Strategy Debt Ratios (by risk tolerance)
+hybrid_strategy_ratios:
+  conservative: 0.30               # Conservative: 30% debt, 70% equity
+  moderate: 0.50                   # Moderate: 50% debt, 50% equity
+  aggressive: 0.70                 # Aggressive: 70% debt, 30% equity
+  maximize_debt: 0.80              # Maximize debt: 80% debt, 20% equity
+
+# Company Size Categories
+company_size_categories:
+  - small
+  - medium
+  - large
+  - enterprise
+
+# Company Stage Categories
+company_stage_categories:
+  - startup
+  - growth
+  - mature
+  - public
+
+# Risk Tolerance Categories
+risk_tolerance_categories:
+  - conservative
+  - moderate
+  - aggressive
+
+# Time Horizon Categories
+time_horizon_categories:
+  - short      # < 1 year
+  - medium     # 1-5 years
+  - long       # > 5 years
+
+

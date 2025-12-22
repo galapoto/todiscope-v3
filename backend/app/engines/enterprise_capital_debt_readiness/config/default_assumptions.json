@@ -1,0 +1,22 @@
+{
+  "capital_adequacy": {
+    "operating_buffer_months": 3,
+    "min_runway_months": 3,
+    "liquid_working_capital_factor": 0.5,
+    "max_debt_to_equity": 2.0,
+    "min_current_ratio": 1.0
+  },
+  "debt_service": {
+    "horizon_months": 12,
+    "min_dscr": 1.25,
+    "min_interest_coverage": 2.0,
+    "default_amortization": "amortizing",
+    "default_payment_frequency_months": 1,
+    "default_annual_interest_rate": 0.08
+  },
+  "cash_available": {
+    "source_metric": "ebitda",
+    "ebitda_to_cash_factor": 0.7
+  }
+}
+

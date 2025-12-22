@@ -1,0 +1,18 @@
+# Data Quality Dimensions Candidate List
+
+This document lists the candidate data quality dimensions relevant for the Data Migration & ERP Readiness Engine. These dimensions help assess the quality and readiness of data for migration and integration.
+
+## Candidate Dimensions
+
+- Completeness: Ensures all required data fields are present.
+- Accuracy: Validates that data values are correct and reliable.
+- Consistency: Checks for uniformity of data across different sources.
+- Timeliness: Measures if data is up-to-date and available when needed.
+- Validity: Confirms data conforms to defined formats and business rules.
+- Uniqueness: Ensures no duplicate records exist.
+- Integrity: Verifies relationships between data entities are maintained.
+- Accessibility: Assesses ease of access to data for migration processes.
+
+## Usage
+
+These dimensions should be used as criteria during data profiling and validation phases to determine migration readiness.

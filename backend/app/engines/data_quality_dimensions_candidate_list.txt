@@ -1,0 +1,10 @@
+Data accuracy
+Data completeness
+Data consistency
+Data timeliness
+Data uniqueness
+Data validity
+Data integrity
+Data reliability
+Data accessibility
+Data traceability

@@ -1,0 +1,70 @@
+{
+  "structural_requirements": {
+    "collections": {
+      "customers": [
+        "customer_id",
+        "customer_name",
+        "customer_email"
+      ],
+      "transactions": [
+        "transaction_id",
+        "transaction_amount",
+        "transaction_currency",
+        "transaction_timestamp"
+      ],
+      "accounts": [
+        "account_id",
+        "account_type",
+        "account_balance"
+      ]
+    },
+    "metadata_keys": [
+      "schema_version",
+      "source_system",
+      "ingestion_date"
+    ]
+  },
+  "quality_thresholds": {
+    "completeness": 0.95,
+    "duplicate_ratio": 0.0,
+    "null_ratio": 0.05
+  },
+  "mapping_expectations": {
+    "customers": {
+      "target_entity": "crm_contact",
+      "field_mappings": {
+        "customer_id": "contact_id",
+        "customer_name": "full_name",
+        "customer_email": "email_address"
+      }
+    },
+    "transactions": {
+      "target_entity": "financial_transaction",
+      "field_mappings": {
+        "transaction_id": "id",
+        "transaction_amount": "amount",
+        "transaction_currency": "currency",
+        "transaction_timestamp": "timestamp"
+      }
+    },
+    "accounts": {
+      "target_entity": "ledger_account",
+      "field_mappings": {
+        "account_id": "id",
+        "account_type": "type",
+        "account_balance": "balance"
+      }
+    }
+  },
+  "risk_thresholds": {
+    "critical_completeness": 0.85,
+    "warning_completeness": 0.90,
+    "duplicate_ratio": 0.02,
+    "null_ratio": 0.10
+  },
+  "assumptions": {
+    "data_snapshot": "RawRecord payload holds a snapshot of enterprise collections that remain immutable once ingested.",
+    "mapping_stability": "Field-level mappings reflect the migration blueprint and will not drift during the run.",
+    "integrity_via_source_ids": "Source systems enforce unique record identifiers, so duplicates signal ingest or alignment risk."
+  }
+}
