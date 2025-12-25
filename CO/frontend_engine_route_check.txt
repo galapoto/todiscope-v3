@@ -1,0 +1,13 @@
+GET /dashboard => 200
+csrd                                   200
+financial-forensics                    200
+cost-intelligence                      200
+audit-readiness                        200
+enterprise-capital-debt-readiness      200
+data-migration-readiness               200
+erp-integration-readiness              200
+enterprise-deal-transaction-readiness  200
+litigation-analysis                    200
+regulatory-readiness                   200
+enterprise-insurance-claim-forensics   200
+distressed-asset-debt-stress           200

@@ -1,0 +1,12 @@
+csrd                                   409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+financial-forensics                    409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+cost-intelligence                      409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+audit-readiness                        409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+enterprise-capital-debt-readiness      409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+data-migration-readiness               409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+erp-integration-readiness              409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+enterprise-deal-transaction-readiness  409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+litigation-analysis                    409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+regulatory-readiness                   409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+enterprise-insurance-claim-forensics   409 {"detail":"NORMALIZE_NOT_COMPLETE"}
+distressed-asset-debt-stress           409 {"detail":"NORMALIZE_NOT_COMPLETE"}

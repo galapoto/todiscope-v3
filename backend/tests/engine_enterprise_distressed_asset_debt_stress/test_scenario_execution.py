@@ -276,3 +276,7 @@ def test_execute_scenario_all_periods() -> None:
         assert period.period_date >= date(2025, 1, 1)
 
 
+
+
+
+

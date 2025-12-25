@@ -231,3 +231,7 @@ def calculate_portfolio_readiness_score(
     }
 
 
+
+
+
+

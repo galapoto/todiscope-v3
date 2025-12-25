@@ -24,3 +24,7 @@ class ErpIntegrationReadinessFinding(Base):
     engine_version: Mapped[str] = mapped_column(String, nullable=False)
 
 
+
+
+
+

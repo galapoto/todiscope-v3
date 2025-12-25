@@ -17,6 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.app.core.dataset.raw_models import RawRecord
+from backend.app.core.dataset.service import load_raw_records
+from backend.app.core.workflows.service import resolve_strict_mode
 from backend.db.models.base import Base
 
 
@@ -244,14 +246,19 @@ class CanonicalRecord(Base):
     ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
-async def normalize_dataset(db: AsyncSession, *, dataset_version_id: str) -> int:
-    raw_rows = (
-        await db.execute(
-            select(RawRecord)
-            .where(RawRecord.dataset_version_id == dataset_version_id)
-            .order_by(RawRecord.ingested_at.asc(), RawRecord.raw_record_id.asc())
-        )
-    ).scalars().all()
+async def normalize_dataset(db: AsyncSession, *, dataset_version_id: str, strict_mode: bool | None = None) -> int:
+    strict_setting = await resolve_strict_mode(
+        db,
+        workflow_id="engine_financial_forensics:normalize",
+        override=strict_mode,
+    )
+    raw_rows = await load_raw_records(
+        db,
+        dataset_version_id=dataset_version_id,
+        verify_checksums=True,
+        strict_mode=strict_setting,
+        order_by=(RawRecord.ingested_at.asc(), RawRecord.raw_record_id.asc()),
+    )
 
     created = 0
     for raw in raw_rows:
@@ -264,4 +271,3 @@ async def normalize_dataset(db: AsyncSession, *, dataset_version_id: str) -> int
 
     await db.commit()
     return created
-

@@ -1,0 +1,6 @@
+csrd                                   409 {"detail":"RUN_NOT_FOUND"}
+financial-forensics                    409 {"detail":"RUN_NOT_FOUND"}
+cost-intelligence                      400 {"detail":"REPORT_TYPE_INVALID"}
+enterprise-capital-debt-readiness      409 {"detail":"RUN_NOT_FOUND"}
+enterprise-deal-transaction-readiness  409 {"detail":"RUN_NOT_FOUND"}
+litigation-analysis                    409 {"detail":"RUN_NOT_FOUND"}

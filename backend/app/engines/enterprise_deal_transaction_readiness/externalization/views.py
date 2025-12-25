@@ -263,3 +263,7 @@ def _validate_no_redacted_fields(data: Any, policy: ExternalizationPolicy, path:
             current_path = f"{path}[{i}]" if path else f"[{i}]"
             _validate_no_redacted_fields(item, policy=policy, path=current_path)
 
+
+
+
+

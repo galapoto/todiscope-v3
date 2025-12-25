@@ -10,3 +10,7 @@ def deterministic_id(*parts: str) -> str:
     key = "|".join(parts)
     return str(uuid.uuid5(_NAMESPACE, key))
 
+
+
+
+

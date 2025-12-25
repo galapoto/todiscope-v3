@@ -8,6 +8,8 @@ from sqlalchemy import select
 from backend.app.core.dataset.immutability import install_immutability_guards
 from backend.app.core.dataset.models import DatasetVersion
 from backend.app.core.dataset.raw_models import RawRecord
+from backend.app.core.dataset.service import load_raw_record_by_id
+from backend.app.core.workflows.service import resolve_strict_mode
 from backend.app.core.db import get_sessionmaker
 from backend.app.engines.construction_cost_intelligence.compare import compare_boq_to_actuals
 from backend.app.engines.construction_cost_intelligence.errors import (
@@ -131,10 +133,21 @@ async def run_engine(
         if dv is None:
             raise DatasetVersionMismatchError("DATASET_VERSION_NOT_FOUND")
 
-        boq_raw = await db.scalar(select(RawRecord).where(RawRecord.raw_record_id == boq_rr_id))
+        strict_mode = await resolve_strict_mode(db, workflow_id=ENGINE_ID, override=None)
+        boq_raw = await load_raw_record_by_id(
+            db,
+            raw_record_id=boq_rr_id,
+            verify_checksums=True,
+            strict_mode=strict_mode,
+        )
         if boq_raw is None:
             raise RawRecordMissingError("BOQ_RAW_RECORD_NOT_FOUND")
-        actual_raw = await db.scalar(select(RawRecord).where(RawRecord.raw_record_id == actual_rr_id))
+        actual_raw = await load_raw_record_by_id(
+            db,
+            raw_record_id=actual_rr_id,
+            verify_checksums=True,
+            strict_mode=strict_mode,
+        )
         if actual_raw is None:
             raise RawRecordMissingError("ACTUAL_RAW_RECORD_NOT_FOUND")
 

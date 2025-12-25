@@ -1,0 +1,5 @@
+csrd                                   200 {"dataset_version_id":"019b507a-acf3-71da-b998-388c003aeabb","started_at":"2025-12-24T13:47:04+00:00","total_emissions_tco2e":0.0,"material_findings":[{"id":"3394835d-fca9-597f-a04
+financial-forensics                    400 {"detail":"FX_ARTIFACT_ID_REQUIRED"}
+litigation-analysis                    400 {"detail":"LEGAL_PAYLOAD_REQUIRED"}
+enterprise-insurance-claim-forensics   400 {"detail":"CLAIMS_REQUIRED"}
+distressed-asset-debt-stress           200 {"dataset_version_id":"019b507a-acf3-71da-b998-388c003aeabb","started_at":"2025-12-24T13:47:04+00:00","debt_exposure_evidence_id":"2f8f429a-79b5-5145-90d5-a793c6086cdd","stress_tes

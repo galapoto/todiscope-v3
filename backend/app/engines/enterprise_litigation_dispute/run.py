@@ -322,7 +322,17 @@ async def run_engine(*, dataset_version_id: object, started_at: object, paramete
         )
 
         completion_time = datetime.now(timezone.utc)
-        run_id = deterministic_id(dv_id, "run", started.isoformat())
+        # Calculate deterministic run_id from stable inputs (not timestamp)
+        # Same inputs → same run_id, enabling deterministic replay
+        import hashlib
+        import json
+        
+        stable_inputs = {
+            "parameters": json.dumps(validated_parameters, sort_keys=True) if validated_parameters else "",
+            "assumptions": json.dumps(assumptions_map, sort_keys=True) if assumptions_map else "",
+        }
+        param_hash = hashlib.sha256(json.dumps(stable_inputs, sort_keys=True).encode()).hexdigest()[:16]
+        run_id = deterministic_id(dv_id, "run", param_hash)
         run_record = EnterpriseLitigationDisputeRun(
             run_id=run_id,
             dataset_version_id=dv_id,

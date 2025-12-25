@@ -253,6 +253,18 @@ async def run_engine(
     """
     # Guard 1: Kill-switch enforcement
     if not is_engine_enabled(ENGINE_ID):
+        # Log disabled engine attempt before raising error
+        from backend.app.core.engine_registry.kill_switch import log_disabled_engine_attempt
+        
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as db:
+            await log_disabled_engine_attempt(
+                engine_id=ENGINE_ID,
+                actor_id="system",
+                attempted_action="run",
+                dataset_version_id=dataset_version_id,
+            )
+        
         raise EngineDisabledError(
             f"ENGINE_DISABLED: Engine {ENGINE_ID} is disabled. "
             "Enable via TODISCOPE_ENABLED_ENGINES environment variable."
@@ -260,7 +272,7 @@ async def run_engine(
     
     # Guard 2: Explicit dataset_version_id validation at entry
     validated_dv_id = _validate_dataset_version_id(dataset_version_id)
-
+    
     if fx_artifact_id is None:
         raise FxArtifactMissingError("FX_ARTIFACT_ID_REQUIRED")
     if not isinstance(fx_artifact_id, str) or not fx_artifact_id.strip():

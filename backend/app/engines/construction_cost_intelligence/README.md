@@ -202,3 +202,7 @@ The engine is integrated into the platform runtime and is mounted only when enab
 - Routes are exposed under `POST /api/v3/engines/cost-intelligence/run` and `POST /api/v3/engines/cost-intelligence/report`
 - Kill-switch is enforced per-request; if disabled after mount, endpoints return `503 ENGINE_DISABLED`
 
+
+
+
+

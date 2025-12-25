@@ -199,10 +199,10 @@ export TODISCOPE_LOG_LEVEL="INFO"
 
 ```bash
 # Start platform (if not already running)
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+uvicorn backend.app.main:app --host 0.0.0.0 --port 8400
 
 # Check engine registry
-curl http://localhost:8000/api/v3/engine-registry/enabled
+curl http://localhost:8400/api/v3/engine-registry/enabled
 
 # Should return:
 # {"enabled_engines": ["engine_distressed_asset_debt_stress", ...]}

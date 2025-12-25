@@ -11,16 +11,19 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
+import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.app.core.calculation.service import get_calculation_run, get_evidence_for_calculation_run
 from backend.app.core.evidence.aggregation import (
-    get_evidence_by_dataset_version,
     get_evidence_for_findings,
     get_findings_by_dataset_version,
     verify_evidence_traceability,
 )
 from backend.app.core.evidence.models import EvidenceRecord, FindingRecord
+from backend.app.core.reporting.models import ReportArtifact
+from backend.app.core.audit.service import log_reporting_action
 
 
 class ReportingError(Exception):
@@ -29,6 +32,11 @@ class ReportingError(Exception):
 
 class InvalidFindingError(ReportingError):
     """Raised when a finding cannot be formatted for reporting."""
+
+
+def deterministic_report_id(*, calculation_run_id: str, report_kind: str) -> str:
+    namespace = uuid.UUID("00000000-0000-0000-0000-000000000046")
+    return str(uuid.uuid5(namespace, f"{calculation_run_id}|{report_kind}"))
 
 
 def format_finding_as_scenario(
@@ -175,6 +183,8 @@ async def generate_litigation_report(
     db: AsyncSession,
     *,
     dataset_version_id: str,
+    calculation_run_id: str,
+    actor_id: str | None = None,
     report_title: str | None = None,
     include_assumptions: bool = True,
     include_evidence_index: bool = True,
@@ -186,6 +196,7 @@ async def generate_litigation_report(
     Args:
         db: Database session
         dataset_version_id: The dataset version ID
+        calculation_run_id: The calculation run ID (required)
         report_title: Optional title for the report
         include_assumptions: Whether to include assumptions section
         include_evidence_index: Whether to include evidence index
@@ -200,11 +211,21 @@ async def generate_litigation_report(
         - evidence_index: list of evidence references (if include_evidence_index=True)
         - limitations: list of limitations and disclaimers
     """
-    # Verify evidence traceability
+    run = await get_calculation_run(db, run_id=calculation_run_id)
+    if run is None:
+        raise ReportingError("CALCULATION_RUN_NOT_FOUND")
+    if run.dataset_version_id != dataset_version_id:
+        raise ReportingError("CALCULATION_RUN_DATASET_VERSION_MISMATCH")
+
+    evidence_records = await get_evidence_for_calculation_run(db, calculation_run_id=calculation_run_id)
+    if not evidence_records:
+        raise ReportingError("CALCULATION_RUN_EVIDENCE_REQUIRED")
+
+    evidence_ids = [e.evidence_id for e in evidence_records]
+    evidence_id_set = set(evidence_ids)
     traceability_result = await verify_evidence_traceability(
-        db, dataset_version_id=dataset_version_id
+        db, dataset_version_id=dataset_version_id, evidence_ids=evidence_ids
     )
-    
     if not traceability_result["valid"]:
         raise ReportingError(
             f"Evidence traceability verification failed: {traceability_result['mismatches']}"
@@ -225,14 +246,16 @@ async def generate_litigation_report(
     all_evidence_ids: set[str] = set()
     
     for finding in findings:
-        evidence_records = evidence_by_finding.get(finding.finding_id, [])
-        evidence_ids = [e.evidence_id for e in evidence_records]
-        all_evidence_ids.update(evidence_ids)
+        finding_evidence = [
+            e for e in evidence_by_finding.get(finding.finding_id, []) if e.evidence_id in evidence_id_set
+        ]
+        finding_evidence_ids = [e.evidence_id for e in finding_evidence]
+        all_evidence_ids.update(finding_evidence_ids)
         
         if format_as_ranges:
-            formatted = format_finding_as_range(finding, evidence_records=evidence_records)
+            formatted = format_finding_as_range(finding, evidence_records=finding_evidence)
         else:
-            formatted = format_finding_as_scenario(finding, evidence_records=evidence_records)
+            formatted = format_finding_as_scenario(finding, evidence_records=finding_evidence)
         
         formatted_findings.append(formatted)
         
@@ -243,9 +266,6 @@ async def generate_litigation_report(
     # Get evidence index if requested
     evidence_index: list[dict[str, Any]] = []
     if include_evidence_index and all_evidence_ids:
-        evidence_records = await get_evidence_by_dataset_version(
-            db, dataset_version_id=dataset_version_id
-        )
         evidence_by_id = {e.evidence_id: e for e in evidence_records}
         
         for evidence_id in sorted(all_evidence_ids):
@@ -269,8 +289,10 @@ async def generate_litigation_report(
     ]
     
     # Build report
+    report_id = deterministic_report_id(calculation_run_id=calculation_run_id, report_kind="litigation")
     report: dict[str, Any] = {
         "metadata": {
+            "report_id": report_id,
             "report_title": report_title or "Litigation Support Report",
             "dataset_version_id": dataset_version_id,
             "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -279,6 +301,7 @@ async def generate_litigation_report(
         },
         "scope": {
             "dataset_version_id": dataset_version_id,
+            "calculation_run_id": calculation_run_id,
             "traceability_verified": traceability_result["valid"],
             "total_evidence_checked": traceability_result["total_checked"],
         },
@@ -292,6 +315,26 @@ async def generate_litigation_report(
     if include_evidence_index:
         report["evidence_index"] = evidence_index
     
+    artifact = ReportArtifact(
+        report_id=report_id,
+        dataset_version_id=dataset_version_id,
+        calculation_run_id=calculation_run_id,
+        engine_id=run.engine_id,
+        report_kind="litigation",
+        payload=report,
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(artifact)
+    await db.flush()
+    await log_reporting_action(
+        db,
+        actor_id=actor_id or "system",
+        dataset_version_id=dataset_version_id,
+        calculation_run_id=calculation_run_id,
+        artifact_id=report_id,
+        report_type="litigation",
+        metadata={"report_id": report_id},
+    )
     return report
 
 
@@ -299,6 +342,8 @@ async def generate_evidence_summary_report(
     db: AsyncSession,
     *,
     dataset_version_id: str,
+    calculation_run_id: str,
+    actor_id: str | None = None,
 ) -> dict[str, Any]:
     """
     Generate a summary report of all evidence for a dataset version.
@@ -306,6 +351,7 @@ async def generate_evidence_summary_report(
     Args:
         db: Database session
         dataset_version_id: The dataset version ID
+        calculation_run_id: The calculation run ID (required)
         
     Returns:
         Dictionary with evidence summary:
@@ -315,45 +361,87 @@ async def generate_evidence_summary_report(
         - evidence_by_engine: list of evidence grouped by engine
         - traceability: traceability verification results
     """
-    from backend.app.core.evidence.aggregation import (
-        aggregate_evidence_by_engine,
-        aggregate_evidence_by_kind,
-        get_evidence_summary,
+    run = await get_calculation_run(db, run_id=calculation_run_id)
+    if run is None:
+        raise ReportingError("CALCULATION_RUN_NOT_FOUND")
+    if run.dataset_version_id != dataset_version_id:
+        raise ReportingError("CALCULATION_RUN_DATASET_VERSION_MISMATCH")
+
+    evidence_records = await get_evidence_for_calculation_run(db, calculation_run_id=calculation_run_id)
+    if not evidence_records:
+        raise ReportingError("CALCULATION_RUN_EVIDENCE_REQUIRED")
+
+    evidence_ids = [record.evidence_id for record in evidence_records]
+    traceability = await verify_evidence_traceability(
+        db, dataset_version_id=dataset_version_id, evidence_ids=evidence_ids
     )
-    
-    # Get summary statistics
-    summary = await get_evidence_summary(db, dataset_version_id=dataset_version_id)
-    
-    # Get grouped evidence
-    evidence_by_kind = await aggregate_evidence_by_kind(db, dataset_version_id=dataset_version_id)
-    evidence_by_engine = await aggregate_evidence_by_engine(db, dataset_version_id=dataset_version_id)
-    
-    # Verify traceability
-    traceability = await verify_evidence_traceability(db, dataset_version_id=dataset_version_id)
-    
-    # Format grouped evidence for reporting
-    kind_summary: list[dict[str, Any]] = []
-    for kind, records in evidence_by_kind.items():
-        kind_summary.append({
+
+    summary = {
+        "total_evidence": len(evidence_records),
+        "engine_ids": sorted({record.engine_id for record in evidence_records}),
+        "kinds": sorted({record.kind for record in evidence_records}),
+    }
+
+    evidence_by_kind: dict[str, list[EvidenceRecord]] = {}
+    evidence_by_engine: dict[str, list[EvidenceRecord]] = {}
+    for record in evidence_records:
+        evidence_by_kind.setdefault(record.kind, []).append(record)
+        evidence_by_engine.setdefault(record.engine_id, []).append(record)
+
+    kind_summary = [
+        {
             "kind": kind,
             "count": len(records),
             "evidence_ids": sorted([r.evidence_id for r in records]),
-        })
-    
-    engine_summary: list[dict[str, Any]] = []
-    for engine_id, records in evidence_by_engine.items():
-        engine_summary.append({
+        }
+        for kind, records in sorted(evidence_by_kind.items())
+    ]
+
+    engine_summary = [
+        {
             "engine_id": engine_id,
             "count": len(records),
             "evidence_ids": sorted([r.evidence_id for r in records]),
-        })
-    
+        }
+        for engine_id, records in sorted(evidence_by_engine.items())
+    ]
+
+    report_id = deterministic_report_id(calculation_run_id=calculation_run_id, report_kind="evidence_summary")
+    artifact = ReportArtifact(
+        report_id=report_id,
+        dataset_version_id=dataset_version_id,
+        calculation_run_id=calculation_run_id,
+        engine_id=run.engine_id,
+        report_kind="evidence_summary",
+        payload={
+            "dataset_version_id": dataset_version_id,
+            "calculation_run_id": calculation_run_id,
+            "summary": summary,
+            "evidence_by_kind": kind_summary,
+            "evidence_by_engine": engine_summary,
+            "traceability": traceability,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        },
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(artifact)
+    await db.flush()
+    await log_reporting_action(
+        db,
+        actor_id=actor_id or "system",
+        dataset_version_id=dataset_version_id,
+        calculation_run_id=calculation_run_id,
+        artifact_id=report_id,
+        report_type="evidence_summary",
+        metadata={"report_id": report_id},
+    )
+
     return {
         "dataset_version_id": dataset_version_id,
+        "calculation_run_id": calculation_run_id,
         "summary": summary,
         "evidence_by_kind": kind_summary,
         "evidence_by_engine": engine_summary,
         "traceability": traceability,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
-

@@ -6,7 +6,7 @@ from typing import Callable
 from fastapi import APIRouter, Request, Response
 
 try:
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest  # type: ignore
+    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest  # type: ignore
 
     _PROM_AVAILABLE = True
 except Exception:  # pragma: no cover

@@ -1,0 +1,43 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack -p 3400",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint",
+    "check:i18n": "node scripts/check-i18n-keys.mjs",
+    "check:engines": "node scripts/check-engines.mjs",
+    "check:parity": "node scripts/check-parity.mjs",
+    "check:bundle": "node scripts/check-bundle-size.mjs",
+    "check:deps": "node -e \"const fs=require('fs'); const lock=JSON.parse(fs.readFileSync('package-lock.json','utf8')); const pkgs=lock.packages||{}; const versions=new Map(); for(const pkg of Object.values(pkgs)){ if(!pkg||!pkg.name||!pkg.version) continue; if(!versions.has(pkg.name)) versions.set(pkg.name,new Set()); versions.get(pkg.name).add(pkg.version);} const dups=[...versions.entries()].filter(([_,s])=>s.size>1); if(dups.length){ console.error('Duplicate dependency versions detected:'); for(const [n,s] of dups){ console.error(n,[...s].join(', ')); } process.exit(1);} console.log('No duplicate dependency versions.');\""
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-table": "^8.21.3",
+    "i18next": "^25.7.3",
+    "jspdf": "^3.0.4",
+    "lucide-react": "^0.562.0",
+    "next": "16.0.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-draggable": "^4.5.0",
+    "react-grid-layout": "^2.1.1",
+    "react-i18next": "^16.5.0",
+    "react-resizable": "^3.0.5",
+    "react-window": "^2.2.3",
+    "recharts": "^3.6.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

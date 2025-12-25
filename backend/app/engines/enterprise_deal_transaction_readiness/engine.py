@@ -11,9 +11,17 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from backend.app.core.engine_registry.kill_switch import is_engine_enabled
+from backend.app.core.db import get_sessionmaker
+from backend.app.core.engine_registry.kill_switch import is_engine_enabled, log_disabled_engine_attempt
 from backend.app.core.engine_registry.registry import REGISTRY
 from backend.app.core.engine_registry.spec import EngineSpec
+from backend.app.core.lifecycle.enforcement import (
+    LifecycleViolationError,
+    record_calculation_completion,
+    verify_calculate_complete,
+    verify_import_complete,
+    verify_normalize_complete,
+)
 
 
 ENGINE_ID = "engine_enterprise_deal_transaction_readiness"
@@ -29,6 +37,14 @@ router = APIRouter(
 @router.post("/run")
 async def run_engine_endpoint(payload: dict) -> dict:
     if not is_engine_enabled(ENGINE_ID):
+        dataset_version_id = payload.get("dataset_version_id")
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="run",
+            dataset_version_id=dataset_version_id if isinstance(dataset_version_id, str) else None,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=(
@@ -49,16 +65,53 @@ async def run_engine_endpoint(payload: dict) -> dict:
         TransactionScopeInvalidError,
         TransactionScopeMissingError,
     )
-    from backend.app.engines.enterprise_deal_transaction_readiness.run import run_engine
+    from backend.app.engines.enterprise_deal_transaction_readiness.run import (
+        _validate_dataset_version_id,
+        run_engine,
+    )
 
     try:
-        return await run_engine(
-            dataset_version_id=payload.get("dataset_version_id"),
+        validated_dv_id = _validate_dataset_version_id(payload.get("dataset_version_id"))
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as guard_db:
+            await verify_import_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+            await verify_normalize_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+
+        result = await run_engine(
+            dataset_version_id=validated_dv_id,
             started_at=payload.get("started_at"),
             transaction_scope=payload.get("transaction_scope"),
             parameters=payload.get("parameters"),
             optional_inputs=payload.get("optional_inputs"),
         )
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as db:
+            run_id = await record_calculation_completion(
+                db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                engine_version=ENGINE_VERSION,
+                parameter_payload=payload,
+                started_at=payload.get("started_at"),
+                actor_id=f"engine:{ENGINE_ID}",
+            )
+        if isinstance(result, dict):
+            result.setdefault("dataset_version_id", validated_dv_id)
+            result.setdefault("run_id", run_id)
+            return result
+        return {"dataset_version_id": validated_dv_id, "run_id": run_id, "result": result}
     except EngineDisabledError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     except DatasetVersionMissingError as exc:
@@ -79,6 +132,8 @@ async def run_engine_endpoint(payload: dict) -> dict:
         raise HTTPException(status_code=400, detail=str(exc))
     except StartedAtInvalidError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except LifecycleViolationError as exc:
+        raise HTTPException(status_code=409, detail=exc.detail) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"ENGINE_RUN_FAILED: {type(exc).__name__}: {exc}")
 
@@ -97,6 +152,14 @@ async def report_endpoint(payload: dict) -> dict:
     """
     # Kill-switch revalidation (hardening)
     if not is_engine_enabled(ENGINE_ID):
+        dataset_version_id = payload.get("dataset_version_id")
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="run",
+            dataset_version_id=dataset_version_id if isinstance(dataset_version_id, str) else None,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=(
@@ -111,7 +174,6 @@ async def report_endpoint(payload: dict) -> dict:
         assemble_report,
     )
     from backend.app.engines.enterprise_deal_transaction_readiness.run import _validate_dataset_version_id
-    from backend.app.core.db import get_sessionmaker
     
     dataset_version_id = payload.get("dataset_version_id")
     run_id = payload.get("run_id")
@@ -131,6 +193,13 @@ async def report_endpoint(payload: dict) -> dict:
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
         try:
+            await verify_calculate_complete(
+                db,
+                dataset_version_id=validated_dv_id,
+                run_id=run_id.strip(),
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
             report = await assemble_report(
                 db,
                 dataset_version_id=validated_dv_id,
@@ -150,6 +219,8 @@ async def report_endpoint(payload: dict) -> dict:
             raise HTTPException(status_code=404, detail=str(exc))
         except DatasetVersionMismatchError as exc:
             raise HTTPException(status_code=409, detail=str(exc))
+        except LifecycleViolationError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
         except Exception as exc:
             raise HTTPException(
                 status_code=500,
@@ -172,6 +243,14 @@ async def export_endpoint(payload: dict) -> dict:
     """
     # Kill-switch revalidation (hardening)
     if not is_engine_enabled(ENGINE_ID):
+        dataset_version_id = payload.get("dataset_version_id")
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="run",
+            dataset_version_id=dataset_version_id if isinstance(dataset_version_id, str) else None,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=(
@@ -223,6 +302,13 @@ async def export_endpoint(payload: dict) -> dict:
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
         try:
+            await verify_calculate_complete(
+                db,
+                dataset_version_id=validated_dv_id,
+                run_id=run_id.strip(),
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
             # Assemble full report
             full_report = await assemble_report(
                 db,
@@ -275,6 +361,8 @@ async def export_endpoint(payload: dict) -> dict:
             raise HTTPException(status_code=404, detail=str(exc))
         except DatasetVersionMismatchError as exc:
             raise HTTPException(status_code=409, detail=str(exc))
+        except LifecycleViolationError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
         except ValueError as exc:
             # External view validation failure
             raise HTTPException(status_code=500, detail=f"EXTERNAL_VIEW_VALIDATION_FAILED: {exc}")

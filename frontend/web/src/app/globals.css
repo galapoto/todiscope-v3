@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --surface-0: #f6f0e7;
+  --surface-1: #fffaf2;
+  --surface-2: #efe5d8;
+  --surface-3: #dfd1c3;
+  --ink-1: #15110c;
+  --ink-2: #3d2f26;
+  --ink-3: #6b5648;
+  --accent-1: #0f766e;
+  --accent-2: #f97316;
+  --accent-3: #a16207;
+  --accent-success: #16a34a;
+  --accent-error: #ef4444;
+  --accent-warning: #f59e0b;
+  --ring: rgba(15, 118, 110, 0.35);
+  --chart-1: #0f766e;
+  --chart-2: #f97316;
+  --chart-3: #a16207;
+}
+
+[data-theme="dark"] {
+  --surface-0: #0d1312;
+  --surface-1: #141b1a;
+  --surface-2: #1f2a29;
+  --surface-3: #2c3b38;
+  --ink-1: #e9f2ef;
+  --ink-2: #b8c9c2;
+  --ink-3: #8a9c95;
+  --accent-1: #5eead4;
+  --accent-2: #fb923c;
+  --accent-3: #facc15;
+  --accent-success: #4ade80;
+  --accent-error: #f87171;
+  --accent-warning: #fbbf24;
+  --ring: rgba(94, 234, 212, 0.35);
+  --chart-1: #5eead4;
+  --chart-2: #fb923c;
+  --chart-3: #facc15;
+}
+
+@theme inline {
+  --font-sans: var(--font-primary);
+  --font-mono: var(--font-code);
+}
+
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  background: var(--surface-0);
+  color: var(--ink-1);
+  font-family: var(--font-primary), sans-serif;
+}
+
+.theme-transition,
+.theme-transition * {
+  transition: background-color 200ms ease, color 200ms ease,
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease,
+    color 180ms ease, border-color 180ms ease;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.6rem;
+}
+
+.btn-md {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.7rem;
+}
+
+.btn-lg {
+  padding: 0.65rem 1.6rem;
+  font-size: 0.75rem;
+}
+
+.btn-primary {
+  background: var(--accent-1);
+  color: var(--surface-1);
+  border: 1px solid transparent;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(15, 118, 110, 0.3);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--surface-3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-1);
+  color: var(--accent-1);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--accent-error);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+  background: rgba(239, 68, 68, 0.18);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px dashed var(--surface-3);
+}
+
+.btn-ghost:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-1);
+  color: var(--accent-1);
+}
+
+.card-hover {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+[data-onboard-active="true"] {
+  outline: 2px solid var(--accent-1);
+  outline-offset: 6px;
+  border-radius: 16px;
+  box-shadow: 0 0 0 6px rgba(15, 118, 110, 0.2);
+}
+
+.dialog-backdrop::backdrop {
+  background: rgba(11, 15, 15, 0.55);
+  animation: fadeIn 180ms ease;
+}
+
+.dialog-enter {
+  animation: scaleIn 180ms ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.6s ease both;
+}
+
+/* Prevent react-grid-layout from causing horizontal overflow */
+.react-grid-layout {
+  position: relative;
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.react-grid-item {
+  box-sizing: border-box;
+}
+
+.react-grid-item > * {
+  width: 100%;
+  height: 100%;
+}

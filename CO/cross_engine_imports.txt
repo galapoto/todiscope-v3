@@ -1,0 +1,269 @@
+backend/app/engines/erp_integration_readiness/models/__init__.py:5:from backend.app.engines.erp_integration_readiness.models.runs import ErpIntegrationReadinessRun
+backend/app/engines/erp_integration_readiness/models/__init__.py:6:from backend.app.engines.erp_integration_readiness.models.findings import ErpIntegrationReadinessFinding
+backend/app/engines/erp_integration_readiness/engine.py:46:    from backend.app.engines.erp_integration_readiness.errors import (
+backend/app/engines/erp_integration_readiness/engine.py:58:    from backend.app.engines.erp_integration_readiness.run import run_engine
+backend/app/engines/erp_integration_readiness/engine.py:59:    from backend.app.engines.erp_integration_readiness.run import _validate_dataset_version_id
+backend/app/engines/erp_integration_readiness/findings_service.py:20:from backend.app.engines.erp_integration_readiness.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/erp_integration_readiness/findings_service.py:21:from backend.app.engines.erp_integration_readiness.models.findings import (
+backend/app/engines/erp_integration_readiness/run.py:13:from backend.app.engines.erp_integration_readiness.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/erp_integration_readiness/run.py:14:from backend.app.engines.erp_integration_readiness.errors import (
+backend/app/engines/erp_integration_readiness/run.py:26:from backend.app.engines.erp_integration_readiness.findings_service import (
+backend/app/engines/erp_integration_readiness/run.py:32:from backend.app.engines.erp_integration_readiness.ids import (
+backend/app/engines/erp_integration_readiness/run.py:36:from backend.app.engines.erp_integration_readiness.models.runs import (
+backend/app/engines/erp_integration_readiness/run.py:39:from backend.app.engines.erp_integration_readiness.models.findings import (
+backend/app/engines/erp_integration_readiness/run.py:42:from backend.app.engines.erp_integration_readiness.compatibility import (
+backend/app/engines/erp_integration_readiness/run.py:47:from backend.app.engines.erp_integration_readiness.readiness import (
+backend/app/engines/erp_integration_readiness/run.py:52:from backend.app.engines.erp_integration_readiness.risk_assessment import (
+backend/app/engines/__init__.py:4:    from backend.app.engines.financial_forensics.engine import register_engine as _register_financial_forensics
+backend/app/engines/__init__.py:5:    from backend.app.engines.audit_readiness.engine import register_engine as _register_audit_readiness
+backend/app/engines/__init__.py:6:    from backend.app.engines.enterprise_deal_transaction_readiness.engine import register_engine as _register_enterprise_deal_transaction_readiness
+backend/app/engines/__init__.py:7:    from backend.app.engines.enterprise_capital_debt_readiness.engine import (
+backend/app/engines/__init__.py:10:    from backend.app.engines.enterprise_distressed_asset_debt_stress.engine import (
+backend/app/engines/__init__.py:13:    from backend.app.engines.enterprise_insurance_claim_forensics.engine import (
+backend/app/engines/__init__.py:16:    from backend.app.engines.csrd.engine import register_engine as _register_csrd
+backend/app/engines/__init__.py:17:    from backend.app.engines.construction_cost_intelligence.engine import register_engine as _register_construction_cost_intelligence
+backend/app/engines/__init__.py:18:    from backend.app.engines.erp_integration_readiness.engine import register_engine as _register_erp_integration_readiness
+backend/app/engines/__init__.py:19:    from backend.app.engines.enterprise_litigation_dispute.engine import register_engine as _register_enterprise_litigation_dispute
+backend/app/engines/__init__.py:20:    from backend.app.engines.data_migration_readiness.engine import register_engine as _register_data_migration_readiness
+backend/app/engines/__init__.py:21:    from backend.app.engines.regulatory_readiness.engine import register_engine as _register_regulatory_readiness
+backend/app/engines/enterprise_deal_transaction_readiness/__init__.py:1:from backend.app.engines.enterprise_deal_transaction_readiness import models
+backend/app/engines/enterprise_deal_transaction_readiness/models/__init__.py:1:from backend.app.engines.enterprise_deal_transaction_readiness.models.runs import (
+backend/app/engines/enterprise_deal_transaction_readiness/models/__init__.py:4:from backend.app.engines.enterprise_deal_transaction_readiness.models.findings import (
+backend/app/engines/data_migration_readiness/engine.py:13:from backend.app.engines.data_migration_readiness.errors import (
+backend/app/engines/data_migration_readiness/engine.py:22:from backend.app.engines.data_migration_readiness.run import run_readiness_check
+backend/app/engines/data_migration_readiness/engine.py:50:        from backend.app.engines.data_migration_readiness.run import _validate_dataset_version_id
+backend/app/engines/financial_forensics/review_integration.py:8:from backend.app.engines.financial_forensics.engine import ENGINE_ID
+backend/app/engines/data_migration_readiness/tests/test_readiness.py:14:from backend.app.engines.data_migration_readiness import run as readiness_run
+backend/app/engines/data_migration_readiness/tests/test_readiness.py:15:from backend.app.engines.data_migration_readiness.checks import (
+backend/app/engines/financial_forensics/models/__init__.py:1:from backend.app.engines.financial_forensics.models.findings import FinancialForensicsFinding
+backend/app/engines/financial_forensics/models/__init__.py:2:from backend.app.engines.financial_forensics.models.leakage import FinancialForensicsLeakageItem
+backend/app/engines/financial_forensics/models/__init__.py:3:from backend.app.engines.financial_forensics.models.runs import FinancialForensicsRun
+backend/app/engines/data_migration_readiness/checks.py:12:from backend.app.engines.data_migration_readiness.errors import ConfigurationLoadError
+backend/app/engines/data_migration_readiness/checks.py:13:from backend.app.engines.data_migration_readiness.ids import deterministic_id
+backend/app/engines/financial_forensics/engine.py:36:    from backend.app.engines.financial_forensics.run import run_engine
+backend/app/engines/financial_forensics/engine.py:37:    from backend.app.engines.financial_forensics.run import (
+backend/app/engines/financial_forensics/engine.py:45:    from backend.app.engines.financial_forensics.failures import RuntimeLimitError
+backend/app/engines/financial_forensics/engine.py:107:    from backend.app.engines.financial_forensics.run import _validate_dataset_version_id
+backend/app/engines/financial_forensics/engine.py:109:    from backend.app.engines.financial_forensics.normalization import normalize_dataset
+backend/app/engines/financial_forensics/engine.py:128:    from backend.app.engines.financial_forensics.run import _validate_dataset_version_id
+backend/app/engines/financial_forensics/engine.py:129:    from backend.app.engines.financial_forensics.report.assembler import assemble_report
+backend/app/engines/financial_forensics/engine.py:130:    from backend.app.engines.financial_forensics.failures import (
+backend/app/engines/data_migration_readiness/run.py:26:from backend.app.engines.data_migration_readiness.checks import (
+backend/app/engines/data_migration_readiness/run.py:42:from backend.app.engines.data_migration_readiness.errors import (
+backend/app/engines/data_migration_readiness/run.py:50:from backend.app.engines.data_migration_readiness.ids import deterministic_id
+backend/app/engines/data_migration_readiness/run.py:51:from backend.app.engines.data_migration_readiness.models import (
+backend/app/engines/financial_forensics/externalization/views.py:12:from backend.app.engines.financial_forensics.externalization.policy import (
+backend/app/engines/financial_forensics/externalization/views.py:21:from backend.app.engines.financial_forensics.leakage.semantic_guards import (
+backend/app/engines/financial_forensics/matching/rules_partial.py:7:from backend.app.engines.financial_forensics.matching.framework import (
+backend/app/engines/financial_forensics/matching/rules_tolerance.py:7:from backend.app.engines.financial_forensics.matching.framework import (
+backend/app/engines/financial_forensics/matching/orchestrator.py:5:from backend.app.engines.financial_forensics.matching.framework import (
+backend/app/engines/financial_forensics/leakage/evidence_emitter.py:13:from backend.app.engines.financial_forensics.engine import ENGINE_ID
+backend/app/engines/financial_forensics/leakage/evidence_emitter.py:14:from backend.app.engines.financial_forensics.leakage.evidence_schema_v1 import (
+backend/app/engines/financial_forensics/matching/rules_exact.py:7:from backend.app.engines.financial_forensics.matching.framework import (
+backend/app/engines/financial_forensics/leakage/classifier.py:15:from backend.app.engines.financial_forensics.leakage.typology import LeakageTypology
+backend/app/engines/financial_forensics/leakage/rollups.py:7:from backend.app.engines.financial_forensics.leakage.typology import LeakageTypology
+backend/app/engines/financial_forensics/report/assembler.py:9:from backend.app.engines.financial_forensics.failures import MissingArtifactError, InconsistentReferenceError, RuntimeLimitError
+backend/app/engines/financial_forensics/report/assembler.py:10:from backend.app.engines.financial_forensics.models.findings import FinancialForensicsFinding
+backend/app/engines/financial_forensics/report/assembler.py:11:from backend.app.engines.financial_forensics.models.leakage import FinancialForensicsLeakageItem
+backend/app/engines/financial_forensics/report/assembler.py:12:from backend.app.engines.financial_forensics.models.runs import FinancialForensicsRun
+backend/app/engines/financial_forensics/report/assembler.py:13:from backend.app.engines.financial_forensics.report.sections import (
+backend/app/engines/financial_forensics/report/assembler.py:20:from backend.app.engines.financial_forensics.runtime_limits import limits_from_parameters
+backend/app/engines/financial_forensics/run.py:13:from backend.app.engines.financial_forensics.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/financial_forensics/run.py:14:from backend.app.engines.financial_forensics.failures import RuntimeLimitError
+backend/app/engines/financial_forensics/run.py:15:from backend.app.engines.financial_forensics.evidence import deterministic_finding_id, emit_finding_evidence
+backend/app/engines/financial_forensics/run.py:16:from backend.app.engines.financial_forensics.fx_convert import convert_amount
+backend/app/engines/financial_forensics/run.py:17:from backend.app.engines.financial_forensics.models import FinancialForensicsRun
+backend/app/engines/financial_forensics/run.py:18:from backend.app.engines.financial_forensics.models.findings import FinancialForensicsFinding
+backend/app/engines/financial_forensics/run.py:19:from backend.app.engines.financial_forensics.models.leakage import FinancialForensicsLeakageItem
+backend/app/engines/financial_forensics/run.py:21:from backend.app.engines.financial_forensics.matching.framework import (
+backend/app/engines/financial_forensics/run.py:27:from backend.app.engines.financial_forensics.matching.orchestrator import run_matching
+backend/app/engines/financial_forensics/run.py:28:from backend.app.engines.financial_forensics.matching.rules_exact import (
+backend/app/engines/financial_forensics/run.py:32:from backend.app.engines.financial_forensics.matching.rules_partial import (
+backend/app/engines/financial_forensics/run.py:36:from backend.app.engines.financial_forensics.matching.rules_tolerance import (
+backend/app/engines/financial_forensics/run.py:40:from backend.app.engines.financial_forensics.normalization import CanonicalRecord
+backend/app/engines/financial_forensics/run.py:41:from backend.app.engines.financial_forensics.review_integration import ensure_default_review_state
+backend/app/engines/financial_forensics/run.py:42:from backend.app.engines.financial_forensics.runtime_limits import limits_from_parameters
+backend/app/engines/financial_forensics/run.py:43:from backend.app.engines.financial_forensics.leakage.classifier import classify_finding
+backend/app/engines/financial_forensics/run.py:44:from backend.app.engines.financial_forensics.leakage.exposure import compute_finding_exposure
+backend/app/engines/financial_forensics/run.py:45:from backend.app.engines.financial_forensics.evidence_schema_v1 import (
+backend/app/engines/enterprise_deal_transaction_readiness/externalization/views.py:17:from backend.app.engines.enterprise_deal_transaction_readiness.externalization.policy import (
+backend/app/engines/enterprise_deal_transaction_readiness/externalization/exporter.py:9:from backend.app.engines.enterprise_deal_transaction_readiness.engine import ENGINE_ID
+backend/app/engines/enterprise_deal_transaction_readiness/externalization/exporter.py:10:from backend.app.engines.enterprise_deal_transaction_readiness.pdf import render_simple_text_pdf
+backend/app/engines/csrd/engine.py:36:    from backend.app.engines.csrd.run import _validate_dataset_version_id, run_engine
+backend/app/engines/csrd/engine.py:37:    from backend.app.engines.csrd.errors import (
+backend/app/engines/csrd/engine.py:129:    from backend.app.engines.csrd.run import _validate_dataset_version_id
+backend/app/engines/csrd/engine.py:130:    from backend.app.engines.csrd.reporting import generate_esrs_report
+backend/app/engines/enterprise_deal_transaction_readiness/run.py:12:from backend.app.engines.enterprise_deal_transaction_readiness.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/enterprise_deal_transaction_readiness/run.py:13:from backend.app.engines.enterprise_deal_transaction_readiness.errors import (
+backend/app/engines/enterprise_deal_transaction_readiness/run.py:25:from backend.app.engines.enterprise_deal_transaction_readiness.findings_service import (
+backend/app/engines/enterprise_deal_transaction_readiness/run.py:28:from backend.app.engines.enterprise_deal_transaction_readiness.ids import (
+backend/app/engines/enterprise_deal_transaction_readiness/run.py:32:from backend.app.engines.enterprise_deal_transaction_readiness.models.runs import (
+backend/app/engines/enterprise_deal_transaction_readiness/findings_service.py:14:from backend.app.engines.enterprise_deal_transaction_readiness.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/enterprise_deal_transaction_readiness/findings_service.py:15:from backend.app.engines.enterprise_deal_transaction_readiness.models.findings import (
+backend/app/engines/enterprise_deal_transaction_readiness/report/assembler.py:13:from backend.app.engines.enterprise_deal_transaction_readiness.ids import hash_run_parameters
+backend/app/engines/enterprise_deal_transaction_readiness/report/assembler.py:14:from backend.app.engines.enterprise_deal_transaction_readiness.models.findings import (
+backend/app/engines/enterprise_deal_transaction_readiness/report/assembler.py:17:from backend.app.engines.enterprise_deal_transaction_readiness.models.runs import (
+backend/app/engines/enterprise_deal_transaction_readiness/report/assembler.py:20:from backend.app.engines.enterprise_deal_transaction_readiness.report.sections import (
+backend/app/engines/financial_forensics/evidence.py:14:from backend.app.engines.financial_forensics.engine import ENGINE_ID
+backend/app/engines/financial_forensics/evidence.py:15:from backend.app.engines.financial_forensics.evidence_schema_v1 import (
+backend/app/engines/enterprise_litigation_dispute/run.py:22:from backend.app.engines.enterprise_litigation_dispute.analysis import (
+backend/app/engines/enterprise_litigation_dispute/run.py:32:from backend.app.engines.enterprise_litigation_dispute.models import (
+backend/app/engines/enterprise_litigation_dispute/run.py:36:from backend.app.engines.enterprise_litigation_dispute.constants import ENGINE_ID
+backend/app/engines/enterprise_litigation_dispute/run.py:37:from backend.app.engines.enterprise_litigation_dispute.errors import (
+backend/app/engines/enterprise_litigation_dispute/run.py:48:from backend.app.engines.enterprise_litigation_dispute.ids import deterministic_id
+backend/app/engines/enterprise_litigation_dispute/engine.py:22:from backend.app.engines.enterprise_litigation_dispute.constants import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/enterprise_litigation_dispute/engine.py:23:from backend.app.engines.enterprise_litigation_dispute.errors import (
+backend/app/engines/enterprise_litigation_dispute/engine.py:34:from backend.app.engines.enterprise_litigation_dispute.models import EnterpriseLitigationDisputeRun
+backend/app/engines/enterprise_litigation_dispute/engine.py:50:    from backend.app.engines.enterprise_litigation_dispute.run import (
+backend/app/engines/enterprise_litigation_dispute/engine.py:122:    from backend.app.engines.enterprise_litigation_dispute.report.assembler import (
+backend/app/engines/enterprise_litigation_dispute/engine.py:128:    from backend.app.engines.enterprise_litigation_dispute.run import _validate_dataset_version_id
+backend/app/engines/construction_cost_intelligence/variance/__init__.py:7:from backend.app.engines.construction_cost_intelligence.variance.detector import (
+backend/app/engines/enterprise_litigation_dispute/report/assembler.py:18:from backend.app.engines.enterprise_litigation_dispute.constants import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/construction_cost_intelligence/variance/detector.py:14:from backend.app.engines.construction_cost_intelligence.models import ComparisonMatch, ComparisonResult
+backend/app/engines/enterprise_litigation_dispute/report/__init__.py:3:from backend.app.engines.enterprise_litigation_dispute.report.assembler import (
+backend/app/engines/construction_cost_intelligence/compare.py:7:from backend.app.engines.construction_cost_intelligence.errors import DatasetVersionMismatchError, IdentityInvalidError
+backend/app/engines/construction_cost_intelligence/compare.py:8:from backend.app.engines.construction_cost_intelligence.models import (
+backend/app/engines/construction_cost_intelligence/models.py:9:from backend.app.engines.construction_cost_intelligence.errors import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:47:    from backend.app.engines.enterprise_deal_transaction_readiness.errors import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:59:    from backend.app.engines.enterprise_deal_transaction_readiness.run import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:146:    from backend.app.engines.enterprise_deal_transaction_readiness.report.assembler import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:151:    from backend.app.engines.enterprise_deal_transaction_readiness.run import _validate_dataset_version_id
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:184:                from backend.app.engines.enterprise_deal_transaction_readiness.externalization.views import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:229:    from backend.app.engines.enterprise_deal_transaction_readiness.report.assembler import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:235:    from backend.app.engines.enterprise_deal_transaction_readiness.externalization.exporter import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:239:    from backend.app.engines.enterprise_deal_transaction_readiness.externalization.views import (
+backend/app/engines/enterprise_deal_transaction_readiness/engine.py:244:    from backend.app.engines.enterprise_deal_transaction_readiness.run import _validate_dataset_version_id
+backend/app/engines/enterprise_capital_debt_readiness/report/assembler.py:93:    from backend.app.engines.enterprise_capital_debt_readiness.report.sections import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:16:from backend.app.engines.construction_cost_intelligence.assumptions import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:25:from backend.app.engines.construction_cost_intelligence.errors import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:29:from backend.app.engines.construction_cost_intelligence.evidence import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:33:from backend.app.engines.construction_cost_intelligence.findings import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:37:from backend.app.engines.construction_cost_intelligence.findings import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:42:from backend.app.engines.construction_cost_intelligence.ids import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:46:from backend.app.engines.construction_cost_intelligence.models import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:50:from backend.app.engines.construction_cost_intelligence.report.sections import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:60:from backend.app.engines.construction_cost_intelligence.variance.detector import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:66:from backend.app.engines.construction_cost_intelligence.time_phased.reporter import (
+backend/app/engines/construction_cost_intelligence/report/assembler.py:69:from backend.app.engines.construction_cost_intelligence.traceability import ENGINE_ID as CORE_ENGINE_ID
+backend/app/engines/construction_cost_intelligence/report/__init__.py:7:from backend.app.engines.construction_cost_intelligence.report.assembler import assemble_report
+backend/app/engines/construction_cost_intelligence/evidence.py:14:from backend.app.engines.construction_cost_intelligence.assumptions import AssumptionRegistry
+backend/app/engines/enterprise_capital_debt_readiness/run.py:15:from backend.app.engines.enterprise_capital_debt_readiness.assumptions import resolved_assumptions
+backend/app/engines/enterprise_capital_debt_readiness/run.py:16:from backend.app.engines.enterprise_capital_debt_readiness.capital_adequacy import assess_capital_adequacy, capital_adequacy_payload
+backend/app/engines/enterprise_capital_debt_readiness/run.py:17:from backend.app.engines.enterprise_capital_debt_readiness.debt_service import assess_debt_service_ability, debt_service_payload
+backend/app/engines/enterprise_capital_debt_readiness/run.py:18:from backend.app.engines.enterprise_capital_debt_readiness.reporting import generate_executive_report
+backend/app/engines/enterprise_capital_debt_readiness/run.py:19:from backend.app.engines.enterprise_capital_debt_readiness.readiness_scores import (
+backend/app/engines/enterprise_capital_debt_readiness/run.py:24:from backend.app.engines.enterprise_capital_debt_readiness.scenario_modeling import (
+backend/app/engines/enterprise_capital_debt_readiness/run.py:27:from backend.app.engines.enterprise_capital_debt_readiness.errors import (
+backend/app/engines/enterprise_capital_debt_readiness/run.py:36:from backend.app.engines.enterprise_capital_debt_readiness.ids import deterministic_id
+backend/app/engines/enterprise_capital_debt_readiness/engine.py:39:    from backend.app.engines.enterprise_capital_debt_readiness.errors import (
+backend/app/engines/enterprise_capital_debt_readiness/engine.py:48:    from backend.app.engines.enterprise_capital_debt_readiness.run import _validate_dataset_version_id, run_engine
+backend/app/engines/enterprise_capital_debt_readiness/engine.py:125:    from backend.app.engines.enterprise_capital_debt_readiness.errors import (
+backend/app/engines/enterprise_capital_debt_readiness/engine.py:129:    from backend.app.engines.enterprise_capital_debt_readiness.report.assembler import (
+backend/app/engines/enterprise_capital_debt_readiness/engine.py:134:    from backend.app.engines.enterprise_capital_debt_readiness.run import _validate_dataset_version_id
+backend/app/engines/construction_cost_intelligence/traceability.py:16:from backend.app.engines.construction_cost_intelligence.errors import DatasetVersionMismatchError
+backend/app/engines/construction_cost_intelligence/traceability.py:17:from backend.app.engines.construction_cost_intelligence.models import ComparisonConfig, ComparisonResult, CostLine
+backend/app/engines/enterprise_capital_debt_readiness/readiness_scores.py:26:from backend.app.engines.enterprise_capital_debt_readiness.credit_readiness import (
+backend/app/engines/enterprise_capital_debt_readiness/readiness_scores.py:35:from backend.app.engines.enterprise_capital_debt_readiness.models import (
+backend/app/engines/enterprise_capital_debt_readiness/readiness_scores.py:39:from backend.app.engines.enterprise_capital_debt_readiness.integration import (
+backend/app/engines/construction_cost_intelligence/run.py:14:from backend.app.engines.construction_cost_intelligence.compare import compare_boq_to_actuals
+backend/app/engines/construction_cost_intelligence/run.py:15:from backend.app.engines.construction_cost_intelligence.errors import (
+backend/app/engines/construction_cost_intelligence/run.py:22:from backend.app.engines.construction_cost_intelligence.models import (
+backend/app/engines/construction_cost_intelligence/run.py:28:from backend.app.engines.construction_cost_intelligence.traceability import (
+backend/app/engines/enterprise_capital_debt_readiness/scenario_modeling.py:22:from backend.app.engines.enterprise_capital_debt_readiness.models import (
+backend/app/engines/enterprise_capital_debt_readiness/scenario_modeling.py:26:from backend.app.engines.enterprise_capital_debt_readiness.readiness_scores import (
+backend/app/engines/enterprise_capital_debt_readiness/scenario_modeling.py:202:    from backend.app.engines.enterprise_capital_debt_readiness.capital_adequacy import (
+backend/app/engines/enterprise_capital_debt_readiness/scenario_modeling.py:214:    from backend.app.engines.enterprise_capital_debt_readiness.debt_service import (
+backend/app/engines/construction_cost_intelligence/time_phased/__init__.py:7:from backend.app.engines.construction_cost_intelligence.time_phased.reporter import (
+backend/app/engines/enterprise_capital_debt_readiness/capital_adequacy.py:7:from backend.app.engines.enterprise_capital_debt_readiness.models import CapitalAdequacyAssessment
+backend/app/engines/enterprise_capital_debt_readiness/capital_adequacy.py:8:from backend.app.engines.enterprise_capital_debt_readiness.credit_readiness import (
+backend/app/engines/construction_cost_intelligence/time_phased/reporter.py:15:from backend.app.engines.construction_cost_intelligence.models import CostLine
+backend/app/engines/construction_cost_intelligence/time_phased/reporter.py:251:    from backend.app.engines.construction_cost_intelligence.errors import DatasetVersionMismatchError
+backend/app/engines/enterprise_insurance_claim_forensics/validation.py:8:from backend.app.engines.enterprise_insurance_claim_forensics.claims_management import (
+backend/app/engines/enterprise_insurance_claim_forensics/validation.py:12:from backend.app.engines.enterprise_insurance_claim_forensics.errors import ClaimValidationError
+backend/app/engines/enterprise_insurance_claim_forensics/remediation.py:19:from backend.app.engines.enterprise_insurance_claim_forensics.ids import deterministic_id
+backend/app/engines/construction_cost_intelligence/engine.py:82:    from backend.app.engines.construction_cost_intelligence.errors import (
+backend/app/engines/construction_cost_intelligence/engine.py:91:    from backend.app.engines.construction_cost_intelligence.run import run_engine
+backend/app/engines/construction_cost_intelligence/engine.py:184:    from backend.app.engines.construction_cost_intelligence.report.assembler import assemble_report
+backend/app/engines/enterprise_insurance_claim_forensics/audit_trail.py:17:from backend.app.engines.enterprise_insurance_claim_forensics.constants import ENGINE_ID
+backend/app/engines/enterprise_insurance_claim_forensics/audit_trail.py:18:from backend.app.engines.enterprise_insurance_claim_forensics.claims_management import (
+backend/app/engines/enterprise_insurance_claim_forensics/audit_trail.py:22:from backend.app.engines.enterprise_insurance_claim_forensics.errors import ImmutableConflictError
+backend/app/engines/enterprise_insurance_claim_forensics/engine.py:16:from backend.app.engines.enterprise_insurance_claim_forensics.constants import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/enterprise_insurance_claim_forensics/engine.py:17:from backend.app.engines.enterprise_insurance_claim_forensics.errors import (
+backend/app/engines/enterprise_insurance_claim_forensics/engine.py:49:    from backend.app.engines.enterprise_insurance_claim_forensics.run import (
+backend/app/engines/construction_cost_intelligence/findings.py:19:from backend.app.engines.construction_cost_intelligence.errors import DatasetVersionMismatchError
+backend/app/engines/construction_cost_intelligence/findings.py:20:from backend.app.engines.construction_cost_intelligence.variance.detector import CostVariance
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:24:from backend.app.engines.enterprise_insurance_claim_forensics.analysis import (
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:30:from backend.app.engines.enterprise_insurance_claim_forensics.readiness_scores import (
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:34:from backend.app.engines.enterprise_insurance_claim_forensics.remediation import (
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:38:from backend.app.engines.enterprise_insurance_claim_forensics.audit_trail import AuditTrail
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:39:from backend.app.engines.enterprise_insurance_claim_forensics.errors import (
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:50:from backend.app.engines.enterprise_insurance_claim_forensics.constants import ENGINE_ID
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:51:from backend.app.engines.enterprise_insurance_claim_forensics.ids import deterministic_id
+backend/app/engines/enterprise_insurance_claim_forensics/run.py:52:from backend.app.engines.enterprise_insurance_claim_forensics.models import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_creation.py:7:from backend.app.engines.enterprise_distressed_asset_debt_stress.errors import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_creation.py:10:from backend.app.engines.enterprise_distressed_asset_debt_stress.ids import deterministic_id
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_creation.py:11:from backend.app.engines.enterprise_distressed_asset_debt_stress.models import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_execution.py:7:from backend.app.engines.enterprise_distressed_asset_debt_stress.errors import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_execution.py:10:from backend.app.engines.enterprise_distressed_asset_debt_stress.ids import deterministic_id
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_execution.py:11:from backend.app.engines.enterprise_distressed_asset_debt_stress.models import (
+backend/app/engines/audit_readiness/evidence_integration.py:22:from backend.app.engines.audit_readiness.errors import EvidenceStorageError, ImmutableConflictError
+backend/app/engines/audit_readiness/evidence_integration.py:23:from backend.app.engines.audit_readiness.ids import deterministic_id
+backend/app/engines/enterprise_distressed_asset_debt_stress/engine.py:19:from backend.app.engines.enterprise_distressed_asset_debt_stress.constants import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/enterprise_distressed_asset_debt_stress/engine.py:53:    from backend.app.engines.enterprise_distressed_asset_debt_stress.run import run_engine
+backend/app/engines/enterprise_distressed_asset_debt_stress/engine.py:54:    from backend.app.engines.enterprise_distressed_asset_debt_stress.errors import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/engine.py:63:    from backend.app.engines.enterprise_distressed_asset_debt_stress.run import _validate_dataset_version_id
+backend/app/engines/enterprise_distressed_asset_debt_stress/reporting.py:7:from backend.app.engines.enterprise_distressed_asset_debt_stress.models import (
+backend/app/engines/audit_readiness/audit_trail.py:13:from backend.app.engines.audit_readiness.evidence_integration import create_audit_trail_entry
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_storage.py:11:from backend.app.engines.enterprise_distressed_asset_debt_stress.errors import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_storage.py:15:from backend.app.engines.enterprise_distressed_asset_debt_stress.models import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/scenario_storage.py:275:    from backend.app.engines.enterprise_distressed_asset_debt_stress.scenario_execution import (
+backend/app/engines/audit_readiness/__init__.py:1:from backend.app.engines.audit_readiness.engine import register_engine
+backend/app/engines/enterprise_distressed_asset_debt_stress/run.py:28:from backend.app.engines.enterprise_distressed_asset_debt_stress.constants import ENGINE_ID
+backend/app/engines/enterprise_distressed_asset_debt_stress/run.py:29:from backend.app.engines.enterprise_distressed_asset_debt_stress.errors import (
+backend/app/engines/enterprise_distressed_asset_debt_stress/run.py:38:from backend.app.engines.enterprise_distressed_asset_debt_stress.ids import deterministic_id
+backend/app/engines/enterprise_distressed_asset_debt_stress/run.py:39:from backend.app.engines.enterprise_distressed_asset_debt_stress.models import (
+backend/app/engines/audit_readiness/engine.py:18:from backend.app.engines.audit_readiness.errors import (
+backend/app/engines/audit_readiness/engine.py:48:    from backend.app.engines.audit_readiness.run import run_engine
+backend/app/engines/audit_readiness/engine.py:49:    from backend.app.engines.audit_readiness.run import _validate_dataset_version_id
+backend/app/engines/audit_readiness/engine_spec.py:9:from backend.app.engines.audit_readiness.engine import register_engine
+backend/app/engines/audit_readiness/regulatory_logic.py:10:from backend.app.engines.audit_readiness.models.regulatory_checks import ControlGap, RegulatoryCheckResult
+backend/app/engines/audit_readiness/control_catalog.py:10:from backend.app.engines.audit_readiness.errors import ControlCatalogError, RegulatoryFrameworkNotFoundError
+backend/app/engines/audit_readiness/run.py:19:from backend.app.engines.audit_readiness.audit_trail import AuditTrail
+backend/app/engines/audit_readiness/run.py:20:from backend.app.engines.audit_readiness.control_catalog import ControlCatalog, load_control_catalog
+backend/app/engines/audit_readiness/run.py:21:from backend.app.engines.audit_readiness.errors import (
+backend/app/engines/audit_readiness/run.py:29:from backend.app.engines.audit_readiness.evidence_integration import (
+backend/app/engines/audit_readiness/run.py:34:from backend.app.engines.audit_readiness.ids import deterministic_id
+backend/app/engines/audit_readiness/run.py:35:from backend.app.engines.audit_readiness.models.runs import AuditReadinessRun
+backend/app/engines/audit_readiness/run.py:36:from backend.app.engines.audit_readiness.regulatory_logic import assess_regulatory_readiness
+backend/app/engines/construction_cost_intelligence/__init__.py:11:from backend.app.engines.construction_cost_intelligence.compare import compare_boq_to_actuals
+backend/app/engines/construction_cost_intelligence/__init__.py:12:from backend.app.engines.construction_cost_intelligence.models import (
+backend/app/engines/construction_cost_intelligence/__init__.py:21:from backend.app.engines.construction_cost_intelligence.run import run_engine
+backend/app/engines/construction_cost_intelligence/__init__.py:22:from backend.app.engines.construction_cost_intelligence.traceability import (
+backend/app/engines/construction_cost_intelligence/__init__.py:27:from backend.app.engines.construction_cost_intelligence.engine import register_engine
+backend/app/engines/audit_readiness/models/__init__.py:6:from backend.app.engines.audit_readiness.models.runs import AuditReadinessRun
+backend/app/engines/audit_readiness/models/__init__.py:7:from backend.app.engines.audit_readiness.models.regulatory_checks import RegulatoryCheckResult
+backend/app/engines/csrd/run.py:16:from backend.app.engines.csrd.emissions import calculate_emissions
+backend/app/engines/csrd/run.py:18:from backend.app.engines.csrd.engine import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/csrd/run.py:19:from backend.app.engines.csrd.errors import (
+backend/app/engines/csrd/run.py:28:from backend.app.engines.csrd.ids import deterministic_id
+backend/app/engines/csrd/run.py:29:from backend.app.engines.csrd.materiality import assess_double_materiality
+backend/app/engines/csrd/run.py:30:from backend.app.engines.csrd.reporting import generate_esrs_report
+backend/app/engines/regulatory_readiness/catalog.py:5:from backend.app.engines.regulatory_readiness.controls import ControlDefinition
+backend/app/engines/regulatory_readiness/mapping.py:6:from backend.app.engines.regulatory_readiness.controls import ControlDefinition, ControlStatus
+backend/app/engines/regulatory_readiness/mapping.py:7:from backend.app.engines.regulatory_readiness.frameworks import RegulatoryFramework
+backend/app/engines/regulatory_readiness/__init__.py:3:from backend.app.engines.regulatory_readiness.run import run_engine
+backend/app/engines/regulatory_readiness/engine.py:15:from backend.app.engines.regulatory_readiness.constants import ENGINE_ID, ENGINE_VERSION
+backend/app/engines/regulatory_readiness/engine.py:16:from backend.app.engines.regulatory_readiness.errors import (
+backend/app/engines/regulatory_readiness/engine.py:26:from backend.app.engines.regulatory_readiness.run import _validate_dataset_version_id, run_engine
+backend/app/engines/regulatory_readiness/frameworks.py:6:from backend.app.engines.regulatory_readiness.controls import ControlDefinition
+backend/app/engines/regulatory_readiness/checks.py:6:from backend.app.engines.regulatory_readiness.controls import ControlDefinition, ControlStatus
+backend/app/engines/regulatory_readiness/run.py:21:from backend.app.engines.regulatory_readiness.catalog import ControlCatalog
+backend/app/engines/regulatory_readiness/run.py:22:from backend.app.engines.regulatory_readiness.checks import ControlEvaluation, evaluate_controls
+backend/app/engines/regulatory_readiness/run.py:23:from backend.app.engines.regulatory_readiness.controls import (
+backend/app/engines/regulatory_readiness/run.py:29:from backend.app.engines.regulatory_readiness.constants import (
+backend/app/engines/regulatory_readiness/run.py:35:from backend.app.engines.regulatory_readiness.errors import (
+backend/app/engines/regulatory_readiness/run.py:44:from backend.app.engines.regulatory_readiness.frameworks import (
+backend/app/engines/regulatory_readiness/run.py:49:from backend.app.engines.regulatory_readiness.ids import deterministic_id
+backend/app/engines/regulatory_readiness/run.py:50:from backend.app.engines.regulatory_readiness.mapping import (
+backend/app/engines/regulatory_readiness/run.py:54:from backend.app.engines.regulatory_readiness.models import (
+backend/app/engines/enterprise_capital_debt_readiness/debt_service.py:8:from backend.app.engines.enterprise_capital_debt_readiness.models import DebtInstrument, DebtPayment, DebtServiceAssessment

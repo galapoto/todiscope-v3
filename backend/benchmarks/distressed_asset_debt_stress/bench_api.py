@@ -64,7 +64,7 @@ async def _send_request(
 
 async def main() -> int:
     parser = argparse.ArgumentParser(description="Benchmark API response times for distressed asset engine.")
-    parser.add_argument("--base-url", default="http://localhost:8000")
+    parser.add_argument("--base-url", default="http://localhost:8400")
     parser.add_argument("--endpoint", default="/api/v3/engines/distressed-asset-debt-stress/run")
     parser.add_argument("--dataset-version-id", required=True)
     parser.add_argument("--started-at", default="", help="ISO timestamp; defaults to now.")

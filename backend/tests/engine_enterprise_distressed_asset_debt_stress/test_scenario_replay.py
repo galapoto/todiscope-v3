@@ -204,3 +204,7 @@ async def test_replay_preserves_assumptions(sqlite_db: None) -> None:
         assert replayed_execution.assumptions_used.market_value_depreciation_factor == Decimal("0.9")
 
 
+
+
+
+

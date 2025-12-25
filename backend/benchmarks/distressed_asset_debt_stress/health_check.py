@@ -73,7 +73,7 @@ async def _check_http(client: httpx.AsyncClient, label: str, method: str, url: s
 
 async def main() -> int:
     parser = argparse.ArgumentParser(description="Run health checks for distressed asset engine.")
-    parser.add_argument("--base-url", default="http://localhost:8000")
+    parser.add_argument("--base-url", default="http://localhost:8400")
     parser.add_argument("--dataset-version-id", default="", help="Optional dataset version for run check.")
     parser.add_argument("--timeout", type=float, default=10.0)
     parser.add_argument("--output", default="", help="Optional path to write JSON output.")

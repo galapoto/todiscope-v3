@@ -1,0 +1,17 @@
+{
+  "name": "komplyint-website-api",
+  "version": "1.0.0",
+  "description": "KOMPLYINT OY Website API",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

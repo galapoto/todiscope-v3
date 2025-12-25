@@ -9,7 +9,8 @@ from sqlalchemy import select
 from backend.app.core.db import get_sessionmaker
 from backend.app.core.dataset.immutability import install_immutability_guards
 from backend.app.core.dataset.models import DatasetVersion
-from backend.app.core.dataset.raw_models import RawRecord
+from backend.app.core.dataset.service import load_raw_records
+from backend.app.core.workflows.service import resolve_strict_mode
 from backend.app.core.evidence.service import create_evidence, create_finding, deterministic_evidence_id, link_finding_to_evidence
 from backend.app.core.evidence.models import EvidenceRecord, FindingEvidenceLink, FindingRecord
 from backend.app.engines.csrd.emissions import calculate_emissions
@@ -180,7 +181,14 @@ async def run_engine(*, dataset_version_id: object, started_at: object, paramete
         if dv is None:
             raise DatasetVersionNotFoundError("DATASET_VERSION_NOT_FOUND")
 
-        raw_records = (await db.scalars(select(RawRecord).where(RawRecord.dataset_version_id == dv_id))).all()
+        strict_mode_override = params.get("strict_mode") if isinstance(params.get("strict_mode"), bool) else None
+        strict_mode = await resolve_strict_mode(db, workflow_id=ENGINE_ID, override=strict_mode_override)
+        raw_records = await load_raw_records(
+            db,
+            dataset_version_id=dv_id,
+            verify_checksums=True,
+            strict_mode=strict_mode,
+        )
         if not raw_records:
             raise RawRecordsMissingError("RAW_RECORDS_REQUIRED")
         esg, financial = _extract_inputs(raw_records[0].payload)

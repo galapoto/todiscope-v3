@@ -8,8 +8,17 @@ from __future__ import annotations
 from fastapi import APIRouter
 from fastapi import HTTPException
 
+from backend.app.core.dataset.errors import ChecksumMismatchError, ChecksumMissingError
+from backend.app.core.db import get_sessionmaker
 from backend.app.core.engine_registry.registry import REGISTRY
 from backend.app.core.engine_registry.spec import EngineSpec
+from backend.app.core.lifecycle.enforcement import (
+    LifecycleViolationError,
+    verify_calculate_complete,
+    verify_import_complete,
+    verify_normalize_complete,
+    record_calculation_completion,
+)
 
 
 ENGINE_ID = "engine_financial_forensics"
@@ -32,16 +41,51 @@ async def run_engine_endpoint(payload: dict) -> dict:
         DatasetVersionNotFoundError,
         FxArtifactInvalidError,
         FxArtifactMissingError,
+        _validate_dataset_version_id,
     )
     from backend.app.engines.financial_forensics.failures import RuntimeLimitError
 
     try:
-        return await run_engine(
-            dataset_version_id=dataset_version_id,
+        validated_dv_id = _validate_dataset_version_id(dataset_version_id)
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as guard_db:
+            await verify_import_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+            await verify_normalize_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+
+        result = await run_engine(
+            dataset_version_id=validated_dv_id,
             fx_artifact_id=fx_artifact_id,
             started_at=started_at,
             parameters=parameters,
         )
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as db:
+            run_id = await record_calculation_completion(
+                db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                engine_version=ENGINE_VERSION,
+                parameter_payload=payload,
+                started_at=started_at,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
+        if isinstance(result, dict):
+            result.setdefault("dataset_version_id", validated_dv_id)
+            result.setdefault("run_id", run_id)
+            return result
+        return {"dataset_version_id": validated_dv_id, "run_id": run_id, "result": result}
     except DatasetVersionInvalidError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     except DatasetVersionMissingError as exc:
@@ -54,7 +98,13 @@ async def run_engine_endpoint(payload: dict) -> dict:
         raise HTTPException(status_code=400, detail=str(exc))
     except RuntimeLimitError as exc:
         raise HTTPException(status_code=413, detail=str(exc))
+    except ChecksumMissingError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except ChecksumMismatchError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
+    except LifecycleViolationError as exc:
+        raise HTTPException(status_code=409, detail=exc.detail) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"ENGINE_RUN_FAILED: {type(exc).__name__}: {exc}")
 
@@ -62,6 +112,7 @@ async def run_engine_endpoint(payload: dict) -> dict:
 @router.post("/normalize")
 async def normalize_endpoint(payload: dict) -> dict:
     dataset_version_id = payload.get("dataset_version_id")
+    strict_mode = payload.get("strict_mode") if isinstance(payload.get("strict_mode"), bool) else None
     from backend.app.engines.financial_forensics.run import _validate_dataset_version_id
     from backend.app.core.db import get_sessionmaker
     from backend.app.engines.financial_forensics.normalization import normalize_dataset
@@ -69,7 +120,12 @@ async def normalize_endpoint(payload: dict) -> dict:
     validated = _validate_dataset_version_id(dataset_version_id)
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
-        created = await normalize_dataset(db, dataset_version_id=validated)
+        try:
+            created = await normalize_dataset(db, dataset_version_id=validated, strict_mode=strict_mode)
+        except ChecksumMissingError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except ChecksumMismatchError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"dataset_version_id": validated, "canonical_created": created}
 
 
@@ -79,7 +135,6 @@ async def report_endpoint(payload: dict) -> dict:
     run_id = payload.get("run_id")
     parameters = payload.get("parameters", {})
     from backend.app.engines.financial_forensics.run import _validate_dataset_version_id
-    from backend.app.core.db import get_sessionmaker
     from backend.app.engines.financial_forensics.report.assembler import assemble_report
     from backend.app.engines.financial_forensics.failures import (
         InconsistentReferenceError,
@@ -94,10 +149,17 @@ async def report_endpoint(payload: dict) -> dict:
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
         try:
+            await verify_calculate_complete(
+                db,
+                dataset_version_id=validated,
+                run_id=run_id.strip(),
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
             return await assemble_report(
                 db,
                 dataset_version_id=validated,
-                run_id=run_id,
+                run_id=run_id.strip(),
                 parameters=parameters or {},
             )
         except MissingArtifactError as exc:
@@ -106,6 +168,8 @@ async def report_endpoint(payload: dict) -> dict:
             raise HTTPException(status_code=409, detail=str(exc))
         except RuntimeLimitError as exc:
             raise HTTPException(status_code=413, detail=str(exc))
+        except LifecycleViolationError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
 
 
 def register_engine() -> None:

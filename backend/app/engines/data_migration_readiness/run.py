@@ -14,7 +14,8 @@ from sqlalchemy import select
 from backend.app.core.db import get_sessionmaker
 from backend.app.core.dataset import immutability as dataset_immutability
 from backend.app.core.dataset.models import DatasetVersion
-from backend.app.core.dataset.raw_models import RawRecord
+from backend.app.core.dataset.service import load_raw_records
+from backend.app.core.workflows.service import resolve_strict_mode
 from backend.app.core.evidence.models import EvidenceRecord, FindingEvidenceLink, FindingRecord
 from backend.app.core.evidence.service import (
     create_evidence,
@@ -307,9 +308,14 @@ async def run_readiness_check(
         if dv is None:
             raise DatasetVersionNotFoundError("DATASET_VERSION_NOT_FOUND")
 
-        raw_records = (await db.scalars(select(RawRecord).where(RawRecord.dataset_version_id == dv_id))).all()
-        if inspect.isawaitable(raw_records):
-            raw_records = await raw_records  # type: ignore[assignment]
+        strict_mode_override = params.get("strict_mode") if isinstance(params.get("strict_mode"), bool) else None
+        strict_mode = await resolve_strict_mode(db, workflow_id=ENGINE_ID, override=strict_mode_override)
+        raw_records = await load_raw_records(
+            db,
+            dataset_version_id=dv_id,
+            verify_checksums=True,
+            strict_mode=strict_mode,
+        )
         if not raw_records:
             raise RawRecordsMissingError("RAW_RECORDS_REQUIRED")
 
@@ -348,7 +354,18 @@ async def run_readiness_check(
             config=config,
         )
 
-        run_id = deterministic_id(dv_id, "run", started.isoformat())
+        # Calculate deterministic run_id from stable inputs (not timestamp)
+        # Same inputs → same run_id, enabling deterministic replay
+        import hashlib
+        import json
+        
+        stable_inputs = {
+            "parameters": json.dumps(params, sort_keys=True) if params else "",
+            "config": json.dumps(dict(config), sort_keys=True) if config else "",
+            "source_systems": json.dumps(sorted(source_systems), sort_keys=True) if source_systems else "",
+        }
+        param_hash = hashlib.sha256(json.dumps(stable_inputs, sort_keys=True).encode()).hexdigest()[:16]
+        run_id = deterministic_id(dv_id, "run", param_hash)
         run_record = DataMigrationReadinessRun(
             run_id=run_id,
             dataset_version_id=dv_id,

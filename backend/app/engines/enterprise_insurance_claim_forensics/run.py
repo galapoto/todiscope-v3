@@ -491,8 +491,16 @@ async def run_engine(*, dataset_version_id: object, started_at: object, paramete
             validation_results=validation_results,
         )
 
-        # Calculate run_id for remediation tasks
-        run_id = deterministic_id(dv_id, started.isoformat())
+        # Calculate deterministic run_id from stable inputs (not timestamp)
+        # Same inputs → same run_id, enabling deterministic replay
+        import hashlib
+        import json
+        
+        stable_inputs = {
+            "parameters": json.dumps(validated_parameters, sort_keys=True) if validated_parameters else "",
+        }
+        param_hash = hashlib.sha256(json.dumps(stable_inputs, sort_keys=True).encode()).hexdigest()[:16]
+        run_id = deterministic_id(dv_id, "run", param_hash)
         
         # Build remediation tasks
         remediation_tasks = build_remediation_tasks(

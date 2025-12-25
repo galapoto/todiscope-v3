@@ -13,6 +13,13 @@ from backend.app.core.db import get_sessionmaker
 from backend.app.core.engine_registry.kill_switch import is_engine_enabled
 from backend.app.core.engine_registry.registry import REGISTRY
 from backend.app.core.engine_registry.spec import EngineSpec
+from backend.app.core.lifecycle.enforcement import (
+    LifecycleViolationError,
+    record_calculation_completion,
+    verify_calculate_complete,
+    verify_import_complete,
+    verify_normalize_complete,
+)
 from backend.app.engines.enterprise_litigation_dispute.constants import ENGINE_ID, ENGINE_VERSION
 from backend.app.engines.enterprise_litigation_dispute.errors import (
     DatasetVersionInvalidError,
@@ -36,19 +43,66 @@ router = APIRouter(
 @router.post("/run")
 async def run_endpoint(payload: dict) -> dict:
     if not is_engine_enabled(ENGINE_ID):
+        from backend.app.core.engine_registry.kill_switch import log_disabled_engine_attempt
+        
+        dataset_version_id = payload.get("dataset_version_id")
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="run",
+            dataset_version_id=dataset_version_id if isinstance(dataset_version_id, str) else None,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=f"ENGINE_DISABLED: Engine {ENGINE_ID} is disabled. Enable via TODISCOPE_ENABLED_ENGINES.",
         )
 
-    from backend.app.engines.enterprise_litigation_dispute.run import run_engine
+    from backend.app.engines.enterprise_litigation_dispute.run import (
+        _validate_dataset_version_id,
+        run_engine,
+    )
 
     try:
-        return await run_engine(
-            dataset_version_id=payload.get("dataset_version_id"),
+        validated_dv_id = _validate_dataset_version_id(payload.get("dataset_version_id"))
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as guard_db:
+            await verify_import_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+            await verify_normalize_complete(
+                guard_db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+                attempted_action="run",
+            )
+
+        result = await run_engine(
+            dataset_version_id=validated_dv_id,
             started_at=payload.get("started_at"),
             parameters=payload.get("parameters"),
         )
+        sessionmaker = get_sessionmaker()
+        async with sessionmaker() as db:
+            run_id = await record_calculation_completion(
+                db,
+                dataset_version_id=validated_dv_id,
+                engine_id=ENGINE_ID,
+                engine_version=ENGINE_VERSION,
+                parameter_payload=payload,
+                started_at=payload.get("started_at"),
+                actor_id=f"engine:{ENGINE_ID}",
+            )
+        if isinstance(result, dict):
+            result.setdefault("dataset_version_id", validated_dv_id)
+            result.setdefault("run_id", run_id)
+            return result
+        return {"dataset_version_id": validated_dv_id, "run_id": run_id, "result": result}
     except DatasetVersionMissingError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except DatasetVersionInvalidError as exc:
@@ -67,6 +121,8 @@ async def run_endpoint(payload: dict) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except ImmutableConflictError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except LifecycleViolationError as exc:
+        raise HTTPException(status_code=409, detail=exc.detail) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"ENGINE_RUN_FAILED: {type(exc).__name__}: {exc}") from exc
 
@@ -74,6 +130,14 @@ async def run_endpoint(payload: dict) -> dict:
 @router.post("/report")
 async def report_endpoint(payload: dict) -> dict:
     if not is_engine_enabled(ENGINE_ID):
+        dataset_version_id = payload.get("dataset_version_id")
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="report",
+            dataset_version_id=dataset_version_id if isinstance(dataset_version_id, str) else None,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=(
@@ -91,22 +155,37 @@ async def report_endpoint(payload: dict) -> dict:
     from backend.app.engines.enterprise_litigation_dispute.run import _validate_dataset_version_id
 
     dataset_version_id = payload.get("dataset_version_id")
+    run_id = payload.get("run_id")
 
     try:
         validated_dv_id = _validate_dataset_version_id(dataset_version_id)
     except (DatasetVersionMissingError, DatasetVersionInvalidError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not isinstance(run_id, str) or not run_id.strip():
+        raise HTTPException(status_code=400, detail="RUN_ID_REQUIRED")
 
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
         try:
-            return await assemble_report(db, dataset_version_id=validated_dv_id)
+            await verify_calculate_complete(
+                db,
+                dataset_version_id=validated_dv_id,
+                run_id=run_id.strip(),
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
+            report = await assemble_report(db, dataset_version_id=validated_dv_id)
+            if isinstance(report, dict) and isinstance(report.get("metadata"), dict):
+                report["metadata"].setdefault("run_id", run_id.strip())
+            return report
         except FindingsNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except EvidenceNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except ReportAssemblyError as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
+        except LifecycleViolationError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
         except Exception as exc:
             raise HTTPException(
                 status_code=500,
@@ -122,6 +201,13 @@ async def export_report(
     format: str = "json",
 ) -> Response | dict:
     if not is_engine_enabled(ENGINE_ID):
+        await log_disabled_engine_attempt(
+            engine_id=ENGINE_ID,
+            actor_id="system",
+            attempted_action="export",
+            dataset_version_id=dataset_version_id,
+        )
+        
         raise HTTPException(
             status_code=503,
             detail=(
@@ -133,24 +219,27 @@ async def export_report(
     fmt = format.lower()
     if fmt not in {"json", "pdf"}:
         raise HTTPException(status_code=400, detail="FORMAT_NOT_SUPPORTED")
-    if run_id is None and dataset_version_id is None:
-        raise HTTPException(status_code=400, detail="DATASET_VERSION_OR_RUN_ID_REQUIRED")
+    if run_id is None:
+        raise HTTPException(status_code=400, detail="RUN_ID_REQUIRED")
 
     sessionmaker = get_sessionmaker()
     async with sessionmaker() as db:
-        if run_id:
-            query = select(EnterpriseLitigationDisputeRun).where(
-                EnterpriseLitigationDisputeRun.run_id == run_id
-            )
-        else:
-            query = (
-                select(EnterpriseLitigationDisputeRun)
-                .where(EnterpriseLitigationDisputeRun.dataset_version_id == dataset_version_id)
-                .order_by(EnterpriseLitigationDisputeRun.run_start_time.desc())
-            )
+        query = select(EnterpriseLitigationDisputeRun).where(EnterpriseLitigationDisputeRun.run_id == run_id)
         run_record = await db.scalar(query)
         if run_record is None:
             raise HTTPException(status_code=404, detail="RUN_NOT_FOUND")
+        if dataset_version_id is not None and dataset_version_id != run_record.dataset_version_id:
+            raise HTTPException(status_code=409, detail="DATASET_VERSION_MISMATCH")
+        try:
+            await verify_calculate_complete(
+                db,
+                dataset_version_id=run_record.dataset_version_id,
+                run_id=run_record.run_id,
+                engine_id=ENGINE_ID,
+                actor_id=f"engine:{ENGINE_ID}",
+            )
+        except LifecycleViolationError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
 
     metadata = {
         "run_id": run_record.run_id,
